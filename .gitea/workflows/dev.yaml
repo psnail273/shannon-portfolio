@@ -50,6 +50,8 @@ jobs:
             --name shannon-portfolio-dev \
             --restart unless-stopped \
             --network caddy-network \
+            -e AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }} \
+            -e PASSWORD=${{ secrets.DEV_PASSWORD }} \
             git.stuffworks.net/psnail273/shannon-portfolio-dev:latest          
 
 
