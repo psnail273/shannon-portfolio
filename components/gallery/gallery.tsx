@@ -1,11 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { images } from '@/lib/images';
+
 import Masonry from '@mui/lab/Masonry';
 import { filters } from '@/lib/filter';
 import { useState } from 'react';
 import Link from 'next/link';
+import { GalleryImageType } from '@/lib/types';
 
 function getDelayFromSlug(slug: string): number {
   let hash = 0;
@@ -16,7 +17,7 @@ function getDelayFromSlug(slug: string): number {
   return Math.abs(hash % 500);
 }
 
-export default function Gallery() {
+export default function Gallery({ images, uriPrefix = '/designs' }: { images: GalleryImageType[], uriPrefix?: string }) {
   const [selectedFilter, setSelectedFilter] = useState(filters[0].name);
   const [filteredImages, setFilteredImages] = useState(images.filter((image) => image.types.includes(selectedFilter) || selectedFilter === 'All'));
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
@@ -45,12 +46,12 @@ export default function Gallery() {
         )) }
       </div>
       <Masonry columns={ { sm: 1, md: 2, lg: 3 } } spacing={ 5 } sx={ { width: 'auto' } }>
-        { filteredImages.map((image) => (
+        { filteredImages.map((image, index) => (
           <div 
             key={ selectedFilter + '-' + image.slug }
             className="overflow-hidden"
           >
-            <Link href={ `/designs/${image.slug}` }>
+            <Link href={ `${uriPrefix}/${image.slug}` }>
               <div 
                 className={ `group relative flex flex-col transition-transform ease-in-out duration-500 ${
                   loadedImages.has(image.slug) 
@@ -76,6 +77,7 @@ export default function Gallery() {
                   width={ image.width }
                   height={ image.height }
                   className="object-contain"
+                  loading={ index < 3 ? 'eager' : 'lazy' }
                   onLoad={ () => { 
                     console.log( selectedFilter + '-' + image.slug );
                     setLoadedImages(prev => new Set(prev).add(image.slug));

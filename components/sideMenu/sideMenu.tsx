@@ -15,7 +15,7 @@ export default function SideMenu({ isSideMenuOpen, handleHamburgerMenuClose }: {
       <ul className='flex flex-col gap-3 '>
         { pages.map((page) => (
           <Link href={ page.href } className='group relative' key={ page.name } onClick={ handleHamburgerMenuClose }>
-            <hr className='absolute left-0 w-0 group-hover:w-20 transistion-transform duration-400 delay-150 ease-in-out top-4 bg-[#1238e0] h-1'/>
+            <hr className='absolute left-0 w-0 group-hover:w-5 sm:group-hover:w-12 lg:group-hover:w-20 transistion-transform duration-400 delay-150 ease-in-out top-4 bg-[#1238e0] h-1'/>
             <li className='hover:text-[#1238e0] transition-colors duration-200 transition-ease-in-out px-8 sm:px-16 lg:px-24'>{ page.name }</li>
           </Link>
         )) }
