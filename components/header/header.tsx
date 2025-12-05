@@ -22,7 +22,7 @@ export default function Header() {
         onClick={ handleHamburgerMenuClose }
       ></div>
       <SideMenu isSideMenuOpen={ isSideMenuOpen } handleHamburgerMenuClose={ handleHamburgerMenuClose } />
-      <div className="flex flex-row justify-between py-[55px] px-[18.4px] items-center">
+      <div className="flex flex-row justify-between py-12 px-8 items-center">
         <div className="text-4xl font-bold  uppercase">Shannon</div>
         <button className='cursor-pointer' onClick={ handleHamburgerMenuOpen }>
           <HamburgerMenu />
