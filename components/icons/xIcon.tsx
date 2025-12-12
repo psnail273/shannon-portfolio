@@ -1,10 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 
 export default function XIcon() {
   const [rotation, setRotation] = useState(0)
+  const isRotatingRef = useRef(false)
+
+  const triggerRotate = useCallback(() => {
+    if (isRotatingRef.current) return
+    isRotatingRef.current = true
+    setRotation((r) => r + 180)
+  }, [])
 
   return (
     <motion.svg
@@ -16,7 +23,11 @@ export default function XIcon() {
       strokeLinecap="butt"
       animate={ { rotate: rotation } }
       transition={ { duration: 0.25, ease: 'easeIn' } }
-      onHoverStart={ () => setRotation((r) => r + 180) }
+      onHoverStart={ triggerRotate }
+      onTap={ triggerRotate }
+      onAnimationComplete={ () => {
+        isRotatingRef.current = false
+      } }
     >
       <motion.line
         x1="17"

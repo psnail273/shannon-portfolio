@@ -1,51 +1,27 @@
 'use client'
 
-import { motion, Variants } from 'motion/react'
-
-const draw: Variants = {
-  hidden: { pathLength: 0, opacity: 0 },
-  visible: (i: number) => {
-    const delay = i * 0.5
-    return {
-      pathLength: 1,
-      opacity: 1,
-      transition: {
-        pathLength: { delay, type: 'spring', duration: .5, bounce: 0 },
-        opacity: { delay, duration: 0.01 },
-      },
-    }
-  },
-}
-
-const wipe: Variants = {
-  rest: {
-    x: -60,
-  },
-  visible: {
-    x: -60,
-    transition: { duration: 0 }, // Instant snap back when hover ends
-  },
-  hover: (i: number) => {
-    const delay = i * 0.5
-    return {
-      x: 40,
-      transition: {
-        delay,
-        duration: 0.75,
-      },
-    }
-  },
-}
+import { useCallback, useRef, useState } from 'react'
+import { motion } from 'motion/react'
 
 export default function HamburgerMenu() {
+  const [wipeNonce, setWipeNonce] = useState(0)
+  const [isWiping, setIsWiping] = useState(false)
+  const isWipingRef = useRef(false)
+
+  const triggerWipe = useCallback(() => {
+    if (isWipingRef.current) return
+    isWipingRef.current = true
+    setWipeNonce((n) => n + 1)
+    setIsWiping(true)
+  }, [])
+
   return (
     <motion.svg
       width="62"
       height="52"
       viewBox="0 0 62 52"
-      initial={ ['hidden', 'rest'] }
-      animate="visible"
-      whileHover="hover"
+      onHoverStart={ triggerWipe }
+      onTap={ triggerWipe }
     >
       <motion.line
         x1="16"
@@ -53,8 +29,12 @@ export default function HamburgerMenu() {
         x2="36"
         y2="33.5"
         stroke="#000000"
-        variants={ draw }
-        custom={ 1 }
+        initial={ { pathLength: 0, opacity: 0 } }
+        animate={ { pathLength: 1, opacity: 1 } }
+        transition={ {
+          pathLength: { delay: 0.5, type: 'spring', duration: 0.5, bounce: 0 },
+          opacity: { delay: 0.5, duration: 0.01 },
+        } }
         style={ { strokeWidth: 2.5, strokeLinecap: 'round', fill: 'transparent' } }
       />
       <motion.line
@@ -63,8 +43,12 @@ export default function HamburgerMenu() {
         x2="46"
         y2="26"
         stroke="#000000"
-        variants={ draw }
-        custom={ 0.5 }
+        initial={ { pathLength: 0, opacity: 0 } }
+        animate={ { pathLength: 1, opacity: 1 } }
+        transition={ {
+          pathLength: { delay: 0.25, type: 'spring', duration: 0.5, bounce: 0 },
+          opacity: { delay: 0.25, duration: 0.01 },
+        } }
         style={ { strokeWidth: 2.5, strokeLinecap: 'round', fill: 'transparent' } }
       />
       <motion.line
@@ -73,37 +57,52 @@ export default function HamburgerMenu() {
         x2="46"
         y2="18.5"
         stroke="#000000"
-        variants={ draw }
-        custom={ 0 }
+        initial={ { pathLength: 0, opacity: 0 } }
+        animate={ { pathLength: 1, opacity: 1 } }
+        transition={ {
+          pathLength: { delay: 0, type: 'spring', duration: 0.5, bounce: 0 },
+          opacity: { delay: 0, duration: 0.01 },
+        } }
         style={ { strokeWidth: 2.5, strokeLinecap: 'round', fill: 'transparent' } }
       />
-      <motion.rect
-        x="16"
-        y="16"
-        width="30"
-        height="5"
-        fill="white"
-        variants={ wipe }
-        custom={ 0 }
-      />
-      <motion.rect
-        x="16"
-        y="24"
-        width="30"
-        height="5"
-        fill="white"
-        variants={ wipe }
-        custom={ 0.5 }
-      />
-      <motion.rect
-        x="16"
-        y="32"
-        width="20"
-        height="5"
-        fill="white"
-        variants={ wipe }
-        custom={ 1 }
-      />
+      { isWiping ? (
+        <motion.g key={ wipeNonce }>
+          <motion.rect
+            x="16"
+            y="16"
+            width="30"
+            height="5"
+            fill="white"
+            initial={ { x: -60 } }
+            animate={ { x: 40 } }
+            transition={ { delay: 0, duration: 0.75 } }
+          />
+          <motion.rect
+            x="16"
+            y="24"
+            width="30"
+            height="5"
+            fill="white"
+            initial={ { x: -60 } }
+            animate={ { x: 40 } }
+            transition={ { delay: 0.25, duration: 0.75 } }
+          />
+          <motion.rect
+            x="16"
+            y="32"
+            width="20"
+            height="5"
+            fill="white"
+            initial={ { x: -60 } }
+            animate={ { x: 40 } }
+            transition={ { delay: 0.5, duration: 0.75 } }
+            onAnimationComplete={ () => {
+              isWipingRef.current = false
+              setIsWiping(false)
+            } }
+          />
+        </motion.g>
+      ) : null }
     </motion.svg>
   )
 }
