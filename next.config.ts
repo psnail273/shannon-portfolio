@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
     minimumCacheTTL: 3600,
+    loader: 'custom',
+    loaderFile: './lib/cloudinary-loader.ts',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
   }
 };
 
