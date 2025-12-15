@@ -10,7 +10,7 @@ export const images: GalleryImageType[] = [
     date: '2025-02-01',
     width: 4480,
     height: 6720,
-    types: ['Art Direction']
+    types: ['Design']
   },
   {
     src: '/pexels-photo-3794359.jpeg',
@@ -21,7 +21,7 @@ export const images: GalleryImageType[] = [
     date: '2025-03-01',
     width: 3024,
     height: 4032,
-    types: ['Art Direction']
+    types: ['Design']
   },
   {
     src: '/pexels-photo-3852577.jpeg',
@@ -32,7 +32,7 @@ export const images: GalleryImageType[] = [
     date: '2025-06-01',
     width: 6000,
     height: 4000,
-    types: ['Photography']
+    types: ['UX Design']
   },
   {
     src: '/pexels-photo-278887.jpeg',
@@ -43,7 +43,7 @@ export const images: GalleryImageType[] = [
     date: '2025-07-01',
     width: 3037,
     height: 2168,
-    types: ['Photography']
+    types: ['UX Design']
   },
   {
     src: '/pexels-photo-5380155.jpeg',
@@ -54,7 +54,7 @@ export const images: GalleryImageType[] = [
     date: '2025-08-01',
     width: 4016,
     height: 6016,
-    types: ['Photography']
+    types: ['UX Design']
   },
   {
     src: '/pexels-photo-707837.jpeg',
@@ -65,7 +65,7 @@ export const images: GalleryImageType[] = [
     date: '2025-10-01',
     width: 6000,
     height: 4000,
-    types: ['Branding', 'Photography']
+    types: ['UX Research', 'UX Design']
   },
   {
     src: '/pexels-photo-2539151.jpeg',
@@ -76,7 +76,7 @@ export const images: GalleryImageType[] = [
     date: '2025-11-01',
     width: 6000,
     height: 3376,
-    types: ['Branding']
+    types: ['UX Research']
   },
   {
     src: '/pexels-photo-8386109.jpeg',
@@ -87,6 +87,6 @@ export const images: GalleryImageType[] = [
     date: '2025-12-01',
     width: 4917,
     height: 3278,
-    types: ['Branding']
+    types: ['UX Research']
   }
 ]

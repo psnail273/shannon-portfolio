@@ -3,12 +3,12 @@ export const filters = [
     name: 'All',
   },
   {
-    name: 'Branding',
+    name: 'Design',
   },
   {
-    name: 'Photography',
+    name: 'UX Design',
   },
   {
-    name: 'Art Direction',
+    name: 'UX Research',
   },
 ]

@@ -7,6 +7,7 @@ import { filters } from '@/lib/filter';
 import { useState } from 'react';
 import Link from 'next/link';
 import { GalleryImageType } from '@/lib/types';
+import Filter from '../filter/filter';
 
 function getDelayFromSlug(slug: string): number {
   let hash = 0;
@@ -33,18 +34,7 @@ export default function Gallery({ images, uriPrefix = '/designs' }: { images: Ga
 
   return (
     <div className="flex flex-col gap-4 md:gap-6 lg:gap-8 xl:gap-10">
-      <div className="flex flex-row items-center gap-4 overflow-x-auto text-nowrap">
-        { filters.map((filter) => (
-          <div
-            className="relative text-[#8d8d8d] hover:text-black active:text-black focus-visible:text-black transistion-colors duration-400 ease-in-out px-2"
-            key={ filter.name }
-            onClick={ async () => handleFilterClick(filter.name) }
-          >
-            <hr className={ `absolute left-0 ${selectedFilter === filter.name ? 'w-full': 'w-0'} top-2.75 h-[2px] bg-[#b997ce]` }/>
-            <span className="cursor-pointer">{ filter.name }</span>
-          </div>
-        )) }
-      </div>
+      <Filter selectedFilter={ selectedFilter } handleFilterClick={ handleFilterClick } />
       <Masonry columns={ { sm: 1, md: 2, lg: 3 } } spacing={ 5 } sx={ { width: 'auto' } }>
         { filteredImages.map((image, index) => (
           <div 
