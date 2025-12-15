@@ -33,15 +33,14 @@ jobs:
           context: .
           push: true
           tags: |
-            git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
-            git.stuffworks.net/psnail273/shannon-portfolio-dev:${{ github.sha }}            
+            git.stuffworks.net/psnail273/shannon-portfolio-dev:latest       
           build-args: |
             NEXT_PUBLIC_DEV_MODE=true
-            NEXT_PUBLIC_SITE_URL=https://shannon.stuffworks.net         
+            NEXT_PUBLIC_SITE_URL=https://shannon.stuffworks.net
           secrets: |
-               DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
-               AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }}
-               PASSWORD=${{ secrets.DEV_PASSWORD }}
+            AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }}
+            PASSWORD=${{ secrets.DEV_PASSWORD }}
+            DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
           cache-from: type=registry,ref=git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
           cache-to: type=inline
 
@@ -54,6 +53,9 @@ jobs:
             --name shannon-portfolio-dev \
             --restart unless-stopped \
             --network caddy-network \
+            -e AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }} \
+            -e PASSWORD=${{ secrets.DEV_PASSWORD }} \
+            -e DATABASE_URL=${{ secrets.DEV_DATABASE_URL }} \
             git.stuffworks.net/psnail273/shannon-portfolio-dev:latest          
 
 
