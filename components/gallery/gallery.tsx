@@ -3,8 +3,7 @@
 import Image from 'next/image';
 
 import Masonry from '@mui/lab/Masonry';
-import { filters } from '@/lib/filter';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { GalleryImageType } from '@/lib/types';
 import Filter from '../filter/filter';
@@ -19,9 +18,17 @@ function getDelayFromSlug(slug: string): number {
 }
 
 export default function Gallery({ images, uriPrefix = '/designs' }: { images: GalleryImageType[], uriPrefix?: string }) {
-  const [selectedFilter, setSelectedFilter] = useState(filters[0].name);
+  const [selectedFilter, setSelectedFilter] = useState('All');
   const [filteredImages, setFilteredImages] = useState(images.filter((image) => image.types.includes(selectedFilter) || selectedFilter === 'All'));
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+
+  const filters = useMemo(() => {
+    const set = new Set<string>();
+    for (const image of images) {
+      for (const t of image.types) set.add(t);
+    }
+    return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+  }, [images]);
 
   const handleFilterClick = async (filter: string) => {
     setLoadedImages(new Set());
@@ -34,7 +41,7 @@ export default function Gallery({ images, uriPrefix = '/designs' }: { images: Ga
 
   return (
     <div className="flex flex-col gap-4 md:gap-6 lg:gap-8 xl:gap-10">
-      <Filter selectedFilter={ selectedFilter } handleFilterClick={ handleFilterClick } />
+      <Filter selectedFilter={ selectedFilter } handleFilterClick={ handleFilterClick } filters={ filters } />
       <Masonry columns={ { sm: 1, md: 2, lg: 3 } } spacing={ 5 } sx={ { width: 'auto' } }>
         { filteredImages.map((image, index) => (
           <div 

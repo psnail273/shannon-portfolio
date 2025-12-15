@@ -1,8 +1,10 @@
 import Gallery from '@/components/gallery/gallery';
-import { secrets } from '@/lib/secrets';
+import { getImages } from '@/lib/db';
 
 export default async function Secrets() {
+  const images = await getImages(true);
+  
   return (
-    <Gallery images={ secrets } uriPrefix="/secrets" />
+    <Gallery images={ images } uriPrefix="/secrets" />
   );
 }

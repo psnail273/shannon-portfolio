@@ -52,6 +52,7 @@ jobs:
             --network caddy-network \
             -e AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }} \
             -e PASSWORD=${{ secrets.DEV_PASSWORD }} \
+            -e DATABASE_URL=${{ secrets.DEV_DATABASE_URL }} \
             git.stuffworks.net/psnail273/shannon-portfolio-dev:latest          
 
 

@@ -1,6 +1,10 @@
-import { filters } from '@/lib/filter';
+type Props = {
+  selectedFilter: string;
+  handleFilterClick: (filter: string) => void | Promise<void>;
+  filters: string[];
+};
 
-export default function Filter({ selectedFilter, handleFilterClick }: { selectedFilter: string, handleFilterClick: (filter: string) => void }) {
+export default function Filter({ selectedFilter, handleFilterClick, filters }: Props) {
   return (
     <div>
       <div className="xs:hidden">
@@ -12,8 +16,8 @@ export default function Filter({ selectedFilter, handleFilterClick }: { selected
           onChange={ (e) => { void handleFilterClick(e.target.value); } }
         >
           { filters.map((filter) => (
-            <option key={ filter.name } value={ filter.name }>
-              { filter.name }
+            <option key={ filter } value={ filter }>
+              { filter }
             </option>
           )) }
         </select>
@@ -23,11 +27,11 @@ export default function Filter({ selectedFilter, handleFilterClick }: { selected
         { filters.map((filter) => (
           <div
             className="relative px-2 text-[#8d8d8d] transition-colors duration-400 ease-in-out hover:text-black active:text-black focus-visible:text-black"
-            key={ filter.name }
-            onClick={ () => { void handleFilterClick(filter.name); } }
+            key={ filter }
+            onClick={ () => { void handleFilterClick(filter); } }
           >
-            <hr className={ `absolute left-0 ${selectedFilter === filter.name ? 'w-full' : 'w-0'} top-2.75 h-[2px] bg-[#b997ce]` } />
-            <span className="cursor-pointer">{ filter.name }</span>
+            <hr className={ `absolute left-0 ${selectedFilter === filter ? 'w-full' : 'w-0'} top-2.75 h-[2px] bg-[#b997ce]` } />
+            <span className="cursor-pointer">{ filter }</span>
           </div>
         )) }
       </div>

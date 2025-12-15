@@ -15,5 +15,9 @@ export const pages = [
   {
     name: 'Secrets',
     href: '/secrets',
+  },
+  {
+    name: 'Contact',
+    href: '/contact',
   }
 ]
