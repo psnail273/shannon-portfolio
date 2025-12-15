@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shannon's Portfolio
 
-## Getting Started
+A portfolio website built for my friend Shannon to showcase their work.
 
-First, run the development server:
+## Tech Stack
+
+- **Next.js 16** with React 19
+- **Tailwind CSS** for styling
+- **MUI** components
+- **Neon** serverless Postgres database
+- **Motion** for animations
+
+## Development
+
+Install dependencies and start the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site will be available at http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For a production build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Database
 
-To learn more about Next.js, take a look at the following resources:
+This project uses [Neon](https://neon.tech) as a serverless Postgres database. Set the `DATABASE_URL` environment variable to connect:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+DATABASE_URL=postgres://user:password@your-neon-host/dbname
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+There's a Gitea Actions workflow (`.gitea/workflows/dev.yaml`) that handles CI/CD. On push to the `dev` branch, it:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Builds a Docker image
+2. Pushes it to the private registry
+3. Deploys the container to the server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The workflow expects these secrets to be configured:
+- `USERNAME` / `PASSWORD` - registry credentials
+- `DEV_AUTH_SECRET` - auth secret for the app
+- `DEV_PASSWORD` - app password
+- `DEV_DATABASE_URL` - Neon connection string
