@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function About() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 py-2 sm:py-4 md:py-8 xl:py-12 px-8">
       <div className="text-5xl  font-playfair">About</div>
       <Image src="/shannon_about.jpg" alt="Shannon" width={ 500 } height={ 500 } />
       <div className="flex flex-col gap-4">
