@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/header/header';
+import AppShell from '@/components/appShell/appShell';
 import { Playfair_Display } from 'next/font/google';
 import DevBanner from '@/components/devBanner/devBanner';
 
@@ -25,8 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={ `${playfair.variable} antialiased` }>
         <DevBanner />
-        <Header />
-        { children }
+        <AppShell>{ children }</AppShell>
       </body>
     </html>
   );
