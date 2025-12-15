@@ -1,6 +1,23 @@
 import crypto from 'crypto';
 
-const AUTH_SECRET = process.env.AUTH_SECRET || process.env.PASSWORD || 'fallback-secret';
+const AUTH_SECRET = (() => {
+  if (process.env.AUTH_SECRET) return process.env.AUTH_SECRET;
+
+  // Avoid coupling token signing to the login password if possible.
+  if (process.env.PASSWORD) {
+    console.warn(
+      '[auth] AUTH_SECRET is not set; falling back to PASSWORD for token signing. Set AUTH_SECRET to improve security.'
+    );
+    return process.env.PASSWORD;
+  }
+
+  // Last-resort: ephemeral per-process secret (safer than a hard-coded fallback).
+  // Note: tokens will be invalidated on server restart.
+  console.warn(
+    '[auth] AUTH_SECRET and PASSWORD are not set; using an ephemeral secret. Set AUTH_SECRET (recommended) to avoid forced logouts.'
+  );
+  return crypto.randomBytes(32).toString('hex');
+})();
 const TOKEN_EXPIRY_HOURS = 1;
 export const TOKEN_EXPIRY_SECONDS = TOKEN_EXPIRY_HOURS * 60 * 60;
 
