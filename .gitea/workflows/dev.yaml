@@ -46,16 +46,15 @@ jobs:
 
       - name: Deploy container
         run: |
-          docker pull git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
+          IMAGE="git.stuffworks.net/psnail273/shannon-portfolio-dev:latest"
+          docker pull "$IMAGE"
           docker stop shannon-portfolio-dev || true
           docker rm shannon-portfolio-dev || true
           docker run -d \
             --name shannon-portfolio-dev \
             --restart unless-stopped \
             --network caddy-network \
-            -e AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }} \
-            -e PASSWORD=${{ secrets.DEV_PASSWORD }} \
-            -e DATABASE_URL=${{ secrets.DEV_DATABASE_URL }} \
-            git.stuffworks.net/psnail273/shannon-portfolio-dev:latest          
-
-
+            -e AUTH_SECRET="${{ secrets.DEV_AUTH_SECRET }}" \
+            -e PASSWORD="${{ secrets.DEV_PASSWORD }}" \
+            -e DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}" \
+            "$IMAGE"
