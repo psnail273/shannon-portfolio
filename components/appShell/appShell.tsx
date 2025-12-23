@@ -4,7 +4,12 @@ import { useState } from 'react';
 import SideMenu from '@/components/sideMenu/sideMenu';
 import Header from '@/components/header/header';
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+interface AppShellProps {
+  children: React.ReactNode;
+  isAuthenticated?: boolean;
+}
+
+export default function AppShell({ children, isAuthenticated = true }: AppShellProps) {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
   const handleHamburgerMenuOpen = () => setIsSideMenuOpen(true);
@@ -28,7 +33,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <div
         className={ `transition-transform duration-1000 ease-in-out ${ isSideMenuOpen ? '-translate-x-[100px]' : 'translate-x-0' }` }
       >
-        <Header onHamburgerMenuOpen={ handleHamburgerMenuOpen } />
+        <Header onHamburgerMenuOpen={ handleHamburgerMenuOpen } isAuthenticated={ isAuthenticated } />
         { children }
       </div>
     </>

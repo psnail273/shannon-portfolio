@@ -8,7 +8,7 @@ import PageWithGallery from '@/components/page-with-gallery/page-with-gallery';
 
 // Separate async component for the gallery with preloading
 async function GalleryLoader() {
-  const projects = await getProjects();
+  const projects = await getProjects(true);
   return (
     <PageWithGallery projects={ projects }>
       <Gallery projects={ projects } />

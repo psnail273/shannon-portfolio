@@ -39,13 +39,13 @@ export default function SideMenu({ isSideMenuOpen, handleHamburgerMenuClose }: {
           </Link>
         )) }
       </ul>
-      <div className="fixed flex items-start bottom-0 left-0 right-0 h-20 px-8 sm:px-16 lg:px-24 bg-white">
+      { /* <div className="fixed flex items-start bottom-0 left-0 right-0 h-20 px-8 sm:px-16 lg:px-24 bg-white">
         <input 
           type="text"
           placeholder="Search Keywords"
           className="py-[12px] text-lg w-full outline-none border-b-2 transition-colors duration-400 ease-in-out focus:border-[#b997ce]"
         />
-      </div>
+      </div> */ }
     </div>
   );
 }

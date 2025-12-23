@@ -13,10 +13,6 @@ export const pages = [
     external: true,
   },
   {
-    name: 'Secrets',
-    href: '/secrets',
-  },
-  {
     name: 'Contact',
     href: '/contact',
   }
