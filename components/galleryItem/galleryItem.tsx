@@ -1,22 +1,30 @@
-import { GalleryImageType } from '@/lib/types';
+import { ProjectType } from '@/lib/types';
 import Image from 'next/image';
+import Markdown from 'react-markdown';
 
-export default async function GalleryItem({ image }: { image: GalleryImageType }) {
-  const date = new Date(image.date);
+export default async function GalleryItem({ project }: { project: ProjectType }) {
+  const date = new Date(project.date);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 justify-between px-8 items-start">
-      <Image 
-        src={ image.src }
-        alt={ image.alt }
-        width={ image.width }
-        height={ image.height }
-        className="object-contain lg:max-w-[600px] w-full"
-      />
-      <div className="flex flex-col w-full gap-8">
-        <div className="text-4xl font-playfair capitalize">{ image.name }</div>
-        <div className="">{ image.description }</div>
-        <hr className="w-[15%] h-[2px] border-none bg-[#8d8d8d]/30"/>
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 justify-between items-start">
+      <div className="flex flex-col gap-4 w-full" >
+        { project.images.map((img) => (
+          <Image 
+            key={ img.src }
+            src={ img.src }
+            alt={ img.alt }
+            width={ img.width }
+            height={ img.height }
+            className="object-contain w-full"
+          />
+        )) }
+      </div>
+      <div className="flex flex-col gap-8 lg:max-w-[300px]">
+        <div className="text-4xl font-playfair capitalize">{ project.title }</div>
+        <div className="prose prose-md">
+          <Markdown>{ project.description }</Markdown>
+        </div>
+        <hr className="w-full h-[2px] border-none bg-[#8d8d8d]/30"/>
         <div className="">Created on { date.toLocaleDateString() }</div>
       </div>
     </div>

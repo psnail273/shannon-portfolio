@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
  
 export default function Intro() {
-  const words = useMemo(() => ['stuff', 'things', 'art', 'websites'] as const, []);
+  const words = useMemo(() => ['user-centric', 'simple', 'intuitive'] as const, []);
   const [wordIndex, setWordIndex] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [phase, setPhase] = useState<'typing' | 'pausing' | 'highlighting' | 'deleting'>('typing');
@@ -56,7 +56,7 @@ export default function Intro() {
  
   return (
     <div className="text-3xl md:text-4xl lg:text-5xl font-playfair">
-      Hello, I&apos;m Shannon! I design{ ' ' }
+      Hi, I&apos;m Shannon. A multi-disciplinary designer located in St. Louis, MO creating{ ' ' }
       <span
         className={ [
           'inline-block transition-colors duration-300 rounded-sm px-1 -mx-1',
@@ -65,7 +65,7 @@ export default function Intro() {
       >
         { displayedWord }
       </span>
-      . Take a look around at my portfolio! This is a bit more info to just fill out the space. What do you think?
+      { ' ' }works.
     </div>
   );
 }

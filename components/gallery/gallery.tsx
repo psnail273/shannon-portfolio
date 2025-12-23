@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Masonry from '@mui/lab/Masonry';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { GalleryImageType } from '@/lib/types';
+import { ProjectType } from '@/lib/types';
 import Filter from '../filter/filter';
 
 function getDelayFromSlug(slug: string): number {
@@ -17,25 +17,37 @@ function getDelayFromSlug(slug: string): number {
   return Math.abs(hash % 500);
 }
 
-export default function Gallery({ images, uriPrefix = '/designs' }: { images: GalleryImageType[], uriPrefix?: string }) {
+export default function Gallery({ projects, uriPrefix = '/designs' }: { projects: ProjectType[], uriPrefix?: string }) {
   const [selectedFilter, setSelectedFilter] = useState('All');
-  const [filteredImages, setFilteredImages] = useState(images.filter((image) => image.types.includes(selectedFilter) || selectedFilter === 'All'));
+  const [filteredProjects, setFilteredProjects] = useState(
+    projects.filter((project) => project.types.includes(selectedFilter) || selectedFilter === 'All')
+  );
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
   const filters = useMemo(() => {
     const set = new Set<string>();
-    for (const image of images) {
-      for (const t of image.types) set.add(t);
+    for (const project of projects) {
+      for (const t of project.types) set.add(t);
     }
     return ['All', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
-  }, [images]);
+  }, [projects]);
 
   const handleFilterClick = async (filter: string) => {
     setLoadedImages(new Set());
     await new Promise(resolve => setTimeout(resolve, 1000));
     setSelectedFilter(filter);
-    setFilteredImages(images.filter((image) => image.types.includes(filter) || filter === 'All'));
+    setFilteredProjects(projects.filter((project) => project.types.includes(filter) || filter === 'All'));
   }
+
+  // Get the first image from each filtered project
+  const filteredImages = filteredProjects
+    .filter((project) => project.images.length > 0)
+    .map((project) => ({
+      ...project.images[0],
+      slug: project.slug,
+      name: project.title,
+      types: project.types,
+    }));
 
   const allImagesLoaded = filteredImages.every((img) => loadedImages.has(img.slug));
 
@@ -76,7 +88,6 @@ export default function Gallery({ images, uriPrefix = '/designs' }: { images: Ga
                   className="object-contain"
                   loading={ index < 3 ? 'eager' : 'lazy' }
                   onLoad={ () => { 
-                    console.log( selectedFilter + '-' + image.slug );
                     setLoadedImages(prev => new Set(prev).add(image.slug));
                   } }
                 />

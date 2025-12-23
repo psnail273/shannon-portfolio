@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -22,4 +23,9 @@ body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   max-width: var(--max-width);
   margin: auto;
+}
+
+.prose ul > li::marker,
+.prose ol > li::marker {
+  color: #b997ce;
 }

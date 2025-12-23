@@ -2,17 +2,20 @@ import 'server-only'
 
 import { notFound } from 'next/navigation';
 import GalleryItem from '@/components/galleryItem/galleryItem';
-import { getImageBySlug } from '@/lib/db';
+import { getProjectBySlug } from '@/lib/db';
+import PageWithImage from '@/components/page-with-image/page-with-image';
 
 export default async function SecretsDesignPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const image = await getImageBySlug(slug);
+  const project = await getProjectBySlug(slug);
 
-  if (!image) {
+  if (!project) {
     notFound();
   }
 
   return (
-    <GalleryItem image={ image } />
+    <PageWithImage imageSrcs={ project.images.map((img) => img.src) }>
+      <GalleryItem project={ project } />
+    </PageWithImage>
   );
 }

@@ -41,23 +41,22 @@ export default function PasswordForm() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <form onSubmit={ handleSubmit } className="w-full max-w-sm space-y-4 ">
-        <div className="space-y-2">
-          <label htmlFor="password">Enter Password (hint: &quot;SecretShannon&quot;)</label>
+      <form onSubmit={ handleSubmit } className="flex flex-col gap-2 w-full max-w-sm ">
+        <div className="space-y-3">
           <input
             type="password"
             id="password"
             value={ password }
             onChange={ (e) => setPassword(e.target.value) }
-            className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2"
+            className="w-full rounded-sm border border-[#171717]/20 px-4 py-3 text-[#171717] bg-white focus:outline-none focus:ring-2 focus:ring-[#b997ce] focus:border-transparent transition-all duration-200"
             placeholder="Enter password"
             required
           />
         </div>
-        { error && <p className="text-red-500 text-center">{ error }</p> }
+        { error && <p className="text-[#c97c7c] text-center text-sm">{ error }</p> }
         <button
           type="submit"
-          className="w-1/2 mx-auto block border rounded-md bg-green-500"
+          className="w-full py-3 rounded-sm bg-[#b997ce] text-white font-medium hover:bg-[#a67fbc] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           disabled={ isLoading }
         >
           { isLoading ? 'Verifying...' : 'Submit' }

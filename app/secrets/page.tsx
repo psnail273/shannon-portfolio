@@ -1,10 +1,23 @@
 import Gallery from '@/components/gallery/gallery';
-import { getImages } from '@/lib/db';
+import { getProjects } from '@/lib/db';
+import Loading from '@/components/loading/loading';
+import { Suspense } from 'react';
+import PageWithGallery from '@/components/page-with-gallery/page-with-gallery';
 
-export default async function Secrets() {
-  const images = await getImages(true);
-  
+// Separate async component for the gallery with preloading
+async function GalleryLoader() {
+  const projects = await getProjects(true);
   return (
-    <Gallery images={ images } uriPrefix="/secrets" />
+    <PageWithGallery projects={ projects }>
+      <Gallery projects={ projects } uriPrefix="/secrets" />
+    </PageWithGallery>
+  );
+}
+
+export default function Secrets() {
+  return (
+    <Suspense fallback={ <Loading /> }>
+      <GalleryLoader />
+    </Suspense>
   );
 }
