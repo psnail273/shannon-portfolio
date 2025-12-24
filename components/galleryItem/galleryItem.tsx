@@ -6,7 +6,7 @@ export default async function GalleryItem({ project }: { project: ProjectType })
   const date = new Date(project.date);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 justify-between items-start">
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 justify-between items-start px-8">
       <div className="flex flex-col gap-4 w-full" >
         { project.images.map((img) => (
           <Image 
