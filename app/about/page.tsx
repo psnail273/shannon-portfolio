@@ -3,7 +3,7 @@ import PageWithImage from '@/components/page-with-image/page-with-image';
 
 export default function About() {
   return (
-    <PageWithImage imageSrcs={ ["/shannon_about.jpg"] }>
+    <PageWithImage imageSrcs={ ['/shannon_about.jpg'] }>
       <div className="flex flex-col gap-8 py-2 sm:py-4 md:py-8 xl:py-12 px-8">
         <div className="text-5xl  font-playfair">About</div>
         <Image src="/shannon_about.jpg" alt="Shannon" width={ 500 } height={ 500 } style={ { objectFit: 'contain' } }/>

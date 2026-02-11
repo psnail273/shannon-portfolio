@@ -1,13 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { ProjectType, ProjectImageType } from '@/lib/types';
 import { createProjectAction, updateProjectAction } from '@/lib/actions';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface AdminProjectFormProps {
   project?: ProjectType;
   onCancel: () => void;
   onSuccess: () => void;
+}
+
+interface ImageWithId extends ProjectImageType {
+  id: string;
 }
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -19,25 +41,165 @@ function toKebabCase(str: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-const emptyImage = { src: '', alt: '', width: 0, height: 0, order: 0 };
+let imageIdCounter = 0;
+function generateImageId(): string {
+  imageIdCounter += 1;
+  return `img-${Date.now()}-${imageIdCounter}`;
+}
+
+function toImagesWithId(images: ProjectImageType[]): ImageWithId[] {
+  return images.map((img) => ({ ...img, id: generateImageId() }));
+}
+
+function DragHandle({ listeners, attributes }: { listeners?: React.HTMLAttributes<HTMLButtonElement>; attributes?: React.HTMLAttributes<HTMLButtonElement> }) {
+  return (
+    <button
+      type="button"
+      className="cursor-grab active:cursor-grabbing touch-none p-1 text-[#8d8d8d] hover:text-[#171717] transition-colors"
+      aria-label="Drag to reorder"
+      { ...attributes }
+      { ...listeners }
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <circle cx="5" cy="3" r="1.5" />
+        <circle cx="11" cy="3" r="1.5" />
+        <circle cx="5" cy="8" r="1.5" />
+        <circle cx="11" cy="8" r="1.5" />
+        <circle cx="5" cy="13" r="1.5" />
+        <circle cx="11" cy="13" r="1.5" />
+      </svg>
+    </button>
+  );
+}
+
+interface SortableImageItemProps {
+  image: ImageWithId;
+  index: number;
+  inputClass: string;
+  onRemove: (index: number) => void;
+  onChange: (index: number, field: keyof ProjectImageType, value: string | number) => void;
+}
+
+function SortableImageItem({ image, index, inputClass, onRemove, onChange }: SortableImageItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={ setNodeRef }
+      style={ style }
+      className="border border-[#171717]/10 rounded-sm p-4 flex flex-col gap-3 bg-white"
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <DragHandle listeners={ listeners } attributes={ attributes } />
+          <span className="text-sm font-medium">Image { index + 1 }</span>
+        </div>
+        <button
+          type="button"
+          onClick={ () => onRemove(index) }
+          className="px-2 py-1 text-xs rounded-sm border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
+        >
+          Remove
+        </button>
+      </div>
+
+      <div>
+        <label className="text-xs text-[#8d8d8d]">Image URL (https://)</label>
+        <input
+          type="text"
+          value={ image.src }
+          onChange={ (e) => onChange(index, 'src', e.target.value) }
+          className={ inputClass }
+          placeholder="https://res.cloudinary.com/..."
+        />
+      </div>
+
+      <div>
+        <label className="text-xs text-[#8d8d8d]">Alt text</label>
+        <input
+          type="text"
+          value={ image.alt }
+          onChange={ (e) => onChange(index, 'alt', e.target.value) }
+          className={ inputClass }
+          placeholder="Descriptive alt text"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs text-[#8d8d8d]">Width</label>
+          <input
+            type="number"
+            value={ image.width || '' }
+            onChange={ (e) => onChange(index, 'width', parseInt(e.target.value) || 0) }
+            className={ inputClass }
+            placeholder="1200"
+            min="1"
+          />
+        </div>
+        <div>
+          <label className="text-xs text-[#8d8d8d]">Height</label>
+          <input
+            type="number"
+            value={ image.height || '' }
+            onChange={ (e) => onChange(index, 'height', parseInt(e.target.value) || 0) }
+            className={ inputClass }
+            placeholder="800"
+            min="1"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminProjectForm({ project, onCancel, onSuccess }: AdminProjectFormProps) {
   const isEditing = !!project;
+  const dndId = useId();
 
   const [slug, setSlug] = useState(project?.slug ?? '');
   const [title, setTitle] = useState(project?.title ?? '');
   const [description, setDescription] = useState(project?.description ?? '');
   const [date, setDate] = useState(project?.date ? new Date(project.date).toISOString().split('T')[0] : '');
-  const [isProtected, setIsProtected] = useState(project?.protected ?? false);
   const [typesInput, setTypesInput] = useState(project?.types.join(', ') ?? '');
-  const [images, setImages] = useState<ProjectImageType[]>(
-    project?.images.length ? project.images : []
+  const [images, setImages] = useState<ImageWithId[]>(
+    project?.images.length ? toImagesWithId(project.images) : []
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [slugTouched, setSlugTouched] = useState(isEditing);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -47,7 +209,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
   };
 
   const handleAddImage = () => {
-    setImages([...images, { ...emptyImage, order: images.length }]);
+    setImages([...images, { src: '', alt: '', width: 0, height: 0, order: images.length, id: generateImageId() }]);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -61,16 +223,16 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
     setImages(updated);
   };
 
-  const handleMoveImage = (index: number, direction: 'up' | 'down') => {
-    if (
-      (direction === 'up' && index === 0) ||
-      (direction === 'down' && index === images.length - 1)
-    ) return;
+  const handleImageDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    const swapIndex = direction === 'up' ? index - 1 : index + 1;
-    const updated = [...images];
-    [updated[index], updated[swapIndex]] = [updated[swapIndex], updated[index]];
-    setImages(updated.map((img, i) => ({ ...img, order: i })));
+    setImages((prev) => {
+      const oldIndex = prev.findIndex((img) => img.id === active.id);
+      const newIndex = prev.findIndex((img) => img.id === over.id);
+      const reordered = arrayMove(prev, oldIndex, newIndex);
+      return reordered.map((img, i) => ({ ...img, order: i }));
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,6 +267,11 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       setIsSubmitting(false);
       return;
     }
+    if (images.length === 0) {
+      setError('At least one image is required.');
+      setIsSubmitting(false);
+      return;
+    }
 
     const types = typesInput
       .split(',')
@@ -116,7 +283,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       title: title.trim(),
       description: description.trim(),
       date,
-      protected: isProtected,
+      protected: false,
       types,
       images: images.map((img, i) => ({
         src: img.src.trim(),
@@ -245,119 +412,44 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
           />
         </div>
 
-        { /* Protected */ }
-        <div className="flex items-center gap-3">
-          <input
-            id="protected"
-            type="checkbox"
-            checked={ isProtected }
-            onChange={ (e) => setIsProtected(e.target.checked) }
-            className="w-5 h-5 rounded-sm border border-[#171717]/20 accent-[#b997ce]"
-          />
-          <label htmlFor="protected" className="text-sm text-[#171717]">Protected (requires authentication to view)</label>
-        </div>
-
         { /* Images */ }
         <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center">
-            <span className={ labelClass }>Images</span>
-            <button
-              type="button"
-              onClick={ handleAddImage }
-              className="px-3 py-1.5 text-sm rounded-sm bg-[#b997ce] text-white hover:bg-[#a67fbc] transition-colors duration-200"
-            >
-              Add Image
-            </button>
-          </div>
+          <span className={ labelClass }>Images *</span>
 
           { images.length === 0 && (
             <p className="text-[#8d8d8d] text-sm">No images added yet.</p>
           ) }
 
-          { images.map((img, index) => (
-            <div
-              key={ index }
-              className="border border-[#171717]/10 rounded-sm p-4 flex flex-col gap-3"
+          <DndContext
+            id={ dndId }
+            sensors={ sensors }
+            collisionDetection={ closestCenter }
+            onDragEnd={ handleImageDragEnd }
+          >
+            <SortableContext
+              items={ images.map((img) => img.id) }
+              strategy={ verticalListSortingStrategy }
             >
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Image { index + 1 }</span>
-                <div className="flex gap-1">
-                  <button
-                    type="button"
-                    onClick={ () => handleMoveImage(index, 'up') }
-                    disabled={ index === 0 }
-                    className="px-2 py-1 text-xs rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors disabled:opacity-30"
-                    title="Move up"
-                  >
-                    Up
-                  </button>
-                  <button
-                    type="button"
-                    onClick={ () => handleMoveImage(index, 'down') }
-                    disabled={ index === images.length - 1 }
-                    className="px-2 py-1 text-xs rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors disabled:opacity-30"
-                    title="Move down"
-                  >
-                    Down
-                  </button>
-                  <button
-                    type="button"
-                    onClick={ () => handleRemoveImage(index) }
-                    className="px-2 py-1 text-xs rounded-sm border border-red-300 text-red-500 hover:bg-red-50 transition-colors"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs text-[#8d8d8d]">Image URL (https://)</label>
-                <input
-                  type="text"
-                  value={ img.src }
-                  onChange={ (e) => handleImageChange(index, 'src', e.target.value) }
-                  className={ inputClass }
-                  placeholder="https://res.cloudinary.com/..."
+              { images.map((img, index) => (
+                <SortableImageItem
+                  key={ img.id }
+                  image={ img }
+                  index={ index }
+                  inputClass={ inputClass }
+                  onRemove={ handleRemoveImage }
+                  onChange={ handleImageChange }
                 />
-              </div>
+              )) }
+            </SortableContext>
+          </DndContext>
 
-              <div>
-                <label className="text-xs text-[#8d8d8d]">Alt text</label>
-                <input
-                  type="text"
-                  value={ img.alt }
-                  onChange={ (e) => handleImageChange(index, 'alt', e.target.value) }
-                  className={ inputClass }
-                  placeholder="Descriptive alt text"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-[#8d8d8d]">Width</label>
-                  <input
-                    type="number"
-                    value={ img.width || '' }
-                    onChange={ (e) => handleImageChange(index, 'width', parseInt(e.target.value) || 0) }
-                    className={ inputClass }
-                    placeholder="1200"
-                    min="1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-[#8d8d8d]">Height</label>
-                  <input
-                    type="number"
-                    value={ img.height || '' }
-                    onChange={ (e) => handleImageChange(index, 'height', parseInt(e.target.value) || 0) }
-                    className={ inputClass }
-                    placeholder="800"
-                    min="1"
-                  />
-                </div>
-              </div>
-            </div>
-          )) }
+          <button
+            type="button"
+            onClick={ handleAddImage }
+            className="px-3 py-1.5 text-sm rounded-sm bg-[#b997ce] text-white hover:bg-[#a67fbc] transition-colors duration-200 self-start"
+          >
+            Add Image
+          </button>
         </div>
 
         { /* Submit */ }

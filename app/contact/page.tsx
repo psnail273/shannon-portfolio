@@ -4,7 +4,7 @@ import PageWithImage from '@/components/page-with-image/page-with-image';
 
 export default function Contact() {
   return (
-    <PageWithImage imageSrcs={ ["/shannon_contact.png"] }>
+    <PageWithImage imageSrcs={ ['/shannon_contact.png'] }>
       <div className="flex flex-col gap-6 py-2 sm:py-4 md:py-8 xl:py-12 px-8">
         <div className="text-5xl  font-playfair">Let&apos;s Connect!</div>
         <div>Want to collaborate on a potential project or grab a coffee and talk about design? Here&apos;s how to reach me.</div>

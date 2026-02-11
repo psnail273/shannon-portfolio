@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { verifyAdminAuthToken } from './auth';
-import { createProject, updateProject, deleteProject } from './db';
+import { createProject, updateProject, deleteProject, updateProjectOrder } from './db';
 import { ProjectImageType } from './types';
 
 export type ActionResult = { success: true } | { success: false; error: string };
@@ -41,6 +41,9 @@ function validateProjectData(data: ProjectFormData): string | null {
   }
   if (!data.date) {
     return 'Date is required.';
+  }
+  if (!data.images || data.images.length === 0) {
+    return 'At least one image is required.';
   }
   for (let i = 0; i < data.images.length; i++) {
     const img = data.images[i];
@@ -149,6 +152,26 @@ export async function updateProjectAction(originalSlug: string, data: ProjectFor
     }
     console.error('updateProjectAction error:', err);
     return { success: false, error: 'Failed to update project. Please try again.' };
+  }
+}
+
+export async function reorderProjectsAction(items: { slug: string; order: number }[]): Promise<ActionResult> {
+  if (!await verifyAdminAuth()) {
+    return { success: false, error: 'Not authenticated.' };
+  }
+
+  if (!items || items.length === 0) {
+    return { success: false, error: 'No items to reorder.' };
+  }
+
+  try {
+    await updateProjectOrder(items);
+    revalidatePath('/');
+    revalidatePath('/admin');
+    return { success: true };
+  } catch (err: unknown) {
+    console.error('reorderProjectsAction error:', err);
+    return { success: false, error: 'Failed to reorder projects. Please try again.' };
   }
 }
 

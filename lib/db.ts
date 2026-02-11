@@ -73,7 +73,8 @@ export async function getProjects(isProtected: boolean = false): Promise<Project
     LEFT JOIN project_image pi ON p.slug = pi.project_slug
     LEFT JOIN image i ON pi.image_src = i.src
     WHERE p.protected=${isProtected}
-    GROUP BY p.slug, p.title, p.description, p.date, p.protected;`
+    GROUP BY p.slug, p.title, p.description, p.date, p.protected
+    ORDER BY p."order" ASC, p.date DESC;`
   return response as unknown as ProjectType[];
 }
 
@@ -129,12 +130,12 @@ export async function getAllProjects(): Promise<ProjectType[]> {
     LEFT JOIN project_image pi ON p.slug = pi.project_slug
     LEFT JOIN image i ON pi.image_src = i.src
     GROUP BY p.slug, p.title, p.description, p.date, p.protected
-    ORDER BY p.date DESC;`;
+    ORDER BY p."order" ASC, p.date DESC;`;
   return response as unknown as ProjectType[];
 }
 
 export async function createProject(
-  projectData: { slug: string; title: string; description: string; date: string; protected: boolean; types: string[] },
+  projectData: { slug: string; title: string; description: string; date: string; protected: boolean; types: string[]; order?: number },
   images: ProjectImageType[]
 ): Promise<void> {
   if (!process.env.DATABASE_URL) {
@@ -143,8 +144,8 @@ export async function createProject(
   const sql = neon(process.env.DATABASE_URL);
 
   const queries = [
-    sql`INSERT INTO project (slug, title, description, date, protected, types)
-        VALUES (${projectData.slug}, ${projectData.title}, ${projectData.description}, ${projectData.date}, ${projectData.protected}, ${projectData.types})`,
+    sql`INSERT INTO project (slug, title, description, date, protected, types, "order")
+        VALUES (${projectData.slug}, ${projectData.title}, ${projectData.description}, ${projectData.date}, ${projectData.protected}, ${projectData.types}, ${projectData.order ?? 0})`,
     ...images.map((img) =>
       sql`INSERT INTO image (src, alt, width, height, "order")
           VALUES (${img.src}, ${img.alt}, ${img.width}, ${img.height}, ${img.order})
@@ -203,4 +204,17 @@ export async function deleteProject(slug: string): Promise<void> {
     sql`DELETE FROM project_image WHERE project_slug = ${slug}`,
     sql`DELETE FROM project WHERE slug = ${slug}`,
   ]);
+}
+
+export async function updateProjectOrder(items: { slug: string; order: number }[]): Promise<void> {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set');
+  }
+  const sql = neon(process.env.DATABASE_URL);
+
+  const queries = items.map((item) =>
+    sql`UPDATE project SET "order" = ${item.order} WHERE slug = ${item.slug}`
+  );
+
+  await sql.transaction(queries);
 }
