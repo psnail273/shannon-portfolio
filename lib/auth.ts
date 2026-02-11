@@ -18,6 +18,17 @@ const AUTH_SECRET = (() => {
   );
   return crypto.randomBytes(32).toString('hex');
 })();
+
+const ADMIN_AUTH_SECRET = (() => {
+  if (process.env.ADMIN_AUTH_SECRET) return process.env.ADMIN_AUTH_SECRET;
+
+  // Fall back to AUTH_SECRET with a prefix to keep admin tokens distinct.
+  console.warn(
+    '[auth] ADMIN_AUTH_SECRET is not set; deriving from AUTH_SECRET. Set ADMIN_AUTH_SECRET for stronger separation.'
+  );
+  return `admin:${AUTH_SECRET}`;
+})();
+
 const TOKEN_EXPIRY_HOURS = 1;
 export const TOKEN_EXPIRY_SECONDS = TOKEN_EXPIRY_HOURS * 60 * 60;
 
@@ -56,6 +67,60 @@ export function verifyAuthToken(token: string): boolean {
   // Verify signature
   const expectedSignature = crypto
     .createHmac('sha256', AUTH_SECRET)
+    .update(payloadBase64)
+    .digest('base64url');
+
+  if (signature !== expectedSignature) {
+    return false;
+  }
+
+  // Check expiration
+  try {
+    const payload: TokenPayload = JSON.parse(
+      Buffer.from(payloadBase64, 'base64url').toString()
+    );
+
+    if (Date.now() > payload.exp) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Creates a signed admin authentication token using a separate secret
+ */
+export function createAdminAuthToken(): string {
+  const payload: TokenPayload = {
+    exp: Date.now() + TOKEN_EXPIRY_SECONDS * 1000,
+  };
+
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = crypto
+    .createHmac('sha256', ADMIN_AUTH_SECRET)
+    .update(payloadBase64)
+    .digest('base64url');
+
+  return `${payloadBase64}.${signature}`;
+}
+
+/**
+ * Verifies an admin authentication token using a separate secret
+ */
+export function verifyAdminAuthToken(token: string): boolean {
+  if (!token) return false;
+
+  const parts = token.split('.');
+  if (parts.length !== 2) return false;
+
+  const [payloadBase64, signature] = parts;
+
+  // Verify signature with admin-specific secret
+  const expectedSignature = crypto
+    .createHmac('sha256', ADMIN_AUTH_SECRET)
     .update(payloadBase64)
     .digest('base64url');
 
