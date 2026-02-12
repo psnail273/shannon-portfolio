@@ -33,6 +33,9 @@ Shannon's Portfolio - a password-protected Next.js 16 portfolio site showcasing 
 - `DATABASE_URL` - Neon Postgres connection string (required)
 - `AUTH_SECRET` - Secret for signing auth tokens (falls back to PASSWORD)
 - `PASSWORD` - Site login password
+- `CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name for image uploads (required for upload)
+- `CLOUDINARY_API_KEY` - Cloudinary API key (required for upload, server-only)
+- `CLOUDINARY_API_SECRET` - Cloudinary API secret (required for upload, server-only)
 - `NEXT_PUBLIC_DEV_MODE` - Shows dev banner when "true"
 - `NEXT_PUBLIC_SITE_URL` - Base URL for metadata
 

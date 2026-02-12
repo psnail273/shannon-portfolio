@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useId } from 'react';
+import { useState, useId, useCallback } from 'react';
 import { ProjectType, ProjectImageType } from '@/lib/types';
 import { createProjectAction, updateProjectAction } from '@/lib/actions';
+import ImageUpload from '@/components/image-upload/image-upload';
 import {
   DndContext,
   closestCenter,
@@ -78,9 +79,11 @@ interface SortableImageItemProps {
   inputClass: string;
   onRemove: (index: number) => void;
   onChange: (index: number, field: keyof ProjectImageType, value: string | number) => void;
+  onUploadSuccess: (index: number, data: { src: string; width: number; height: number }) => void;
+  onUploadRemove: (index: number) => void;
 }
 
-function SortableImageItem({ image, index, inputClass, onRemove, onChange }: SortableImageItemProps) {
+function SortableImageItem({ image, index, inputClass, onRemove, onChange, onUploadSuccess, onUploadRemove }: SortableImageItemProps) {
   const {
     attributes,
     listeners,
@@ -95,6 +98,14 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange }: Sor
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+
+  const handleUploadSuccess = useCallback((data: { src: string; width: number; height: number }) => {
+    onUploadSuccess(index, data);
+  }, [index, onUploadSuccess]);
+
+  const handleUploadRemove = useCallback(() => {
+    onUploadRemove(index);
+  }, [index, onUploadRemove]);
 
   return (
     <div
@@ -116,16 +127,11 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange }: Sor
         </button>
       </div>
 
-      <div>
-        <label className="text-xs text-[#8d8d8d]">Image URL (https://)</label>
-        <input
-          type="text"
-          value={ image.src }
-          onChange={ (e) => onChange(index, 'src', e.target.value) }
-          className={ inputClass }
-          placeholder="https://res.cloudinary.com/..."
-        />
-      </div>
+      <ImageUpload
+        initialImage={ image.src ? { src: image.src, alt: image.alt, width: image.width, height: image.height, order: image.order } : undefined }
+        onUploadSuccess={ handleUploadSuccess }
+        onRemove={ handleUploadRemove }
+      />
 
       <div>
         <label className="text-xs text-[#8d8d8d]">Alt text</label>
@@ -136,31 +142,6 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange }: Sor
           className={ inputClass }
           placeholder="Descriptive alt text"
         />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs text-[#8d8d8d]">Width</label>
-          <input
-            type="number"
-            value={ image.width || '' }
-            onChange={ (e) => onChange(index, 'width', parseInt(e.target.value) || 0) }
-            className={ inputClass }
-            placeholder="1200"
-            min="1"
-          />
-        </div>
-        <div>
-          <label className="text-xs text-[#8d8d8d]">Height</label>
-          <input
-            type="number"
-            value={ image.height || '' }
-            onChange={ (e) => onChange(index, 'height', parseInt(e.target.value) || 0) }
-            className={ inputClass }
-            placeholder="800"
-            min="1"
-          />
-        </div>
       </div>
     </div>
   );
@@ -223,6 +204,22 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
     setImages(updated);
   };
 
+  const handleImageUploadSuccess = useCallback((index: number, data: { src: string; width: number; height: number }) => {
+    setImages((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], src: data.src, width: data.width, height: data.height };
+      return updated;
+    });
+  }, []);
+
+  const handleImageUploadRemove = useCallback((index: number) => {
+    setImages((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], src: '', width: 0, height: 0 };
+      return updated;
+    });
+  }, []);
+
   const handleImageDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -267,8 +264,18 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       setIsSubmitting(false);
       return;
     }
-    if (images.length === 0) {
-      setError('At least one image is required.');
+    // Filter out empty image slots (user added slot but never uploaded)
+    const validImages = images.filter((img) => img.src.trim() !== '');
+
+    if (validImages.length === 0) {
+      setError('At least one image is required. Upload an image for each slot.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const missingAlt = validImages.some((img) => !img.alt.trim());
+    if (missingAlt) {
+      setError('All images must have alt text.');
       setIsSubmitting(false);
       return;
     }
@@ -283,9 +290,8 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       title: title.trim(),
       description: description.trim(),
       date,
-      protected: false,
       types,
-      images: images.map((img, i) => ({
+      images: validImages.map((img, i) => ({
         src: img.src.trim(),
         alt: img.alt.trim(),
         width: Number(img.width),
@@ -438,6 +444,8 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
                   inputClass={ inputClass }
                   onRemove={ handleRemoveImage }
                   onChange={ handleImageChange }
+                  onUploadSuccess={ handleImageUploadSuccess }
+                  onUploadRemove={ handleImageUploadRemove }
                 />
               )) }
             </SortableContext>
