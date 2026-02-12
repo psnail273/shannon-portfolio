@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { getAllProjects } from '@/lib/db';
+import { getProjects } from '@/lib/db';
 import { verifyAdminAuthToken } from '@/lib/auth';
 import AdminDashboard from './admin-dashboard';
 import AdminPasswordForm from '@/components/adminPasswordForm/adminPasswordForm';
@@ -18,7 +18,7 @@ export default async function AdminPage() {
     );
   }
 
-  const projects = await getAllProjects();
+  const projects = await getProjects();
 
   return (
     <div className="flex flex-col gap-6 py-2 sm:py-4 md:py-8 xl:py-12 px-8">

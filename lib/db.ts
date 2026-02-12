@@ -3,12 +3,15 @@
 import { neon } from '@neondatabase/serverless';
 import { GalleryImageType, ProjectImageType, ProjectType } from './types';
 
-export async function getImages (): Promise<GalleryImageType[]> {
+function getSql() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not set');
   }
+  return neon(process.env.DATABASE_URL);
+}
 
-  const sql = neon(process.env.DATABASE_URL);
+export async function getImages (): Promise<GalleryImageType[]> {
+  const sql = getSql();
   const response = await sql`
     SELECT
       src,
@@ -27,10 +30,7 @@ export async function getImages (): Promise<GalleryImageType[]> {
 }
 
 export async function getImageBySlug(slug: string): Promise<GalleryImageType | null> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
   const response = await sql`
     SELECT
       src,
@@ -49,10 +49,7 @@ export async function getImageBySlug(slug: string): Promise<GalleryImageType | n
 }
 
 export async function getProjects(): Promise<ProjectType[]> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
   const response = await sql`
     SELECT
       p.slug,
@@ -76,10 +73,7 @@ export async function getProjects(): Promise<ProjectType[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<ProjectType | null> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
   const response = await sql`
     SELECT
       p.slug,
@@ -102,41 +96,11 @@ export async function getProjectBySlug(slug: string): Promise<ProjectType | null
   return response[0] as unknown as ProjectType;
 }
 
-export async function getAllProjects(): Promise<ProjectType[]> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
-  const response = await sql`
-    SELECT
-      p.slug,
-      p.title,
-      p.description,
-      p.date,
-      p.types,
-      COALESCE(
-        json_agg(
-           json_build_object('src', i.src, 'alt', i.alt, 'width', i.width, 'height', i.height, 'order', i.order)
-           ORDER BY i.order
-        ) FILTER (WHERE i.src IS NOT NULL),
-        '[]'
-      ) as images
-    FROM project p
-    LEFT JOIN project_image pi ON p.slug = pi.project_slug
-    LEFT JOIN image i ON pi.image_src = i.src
-    GROUP BY p.slug, p.title, p.description, p.date
-    ORDER BY p."order" ASC, p.date DESC;`;
-  return response as unknown as ProjectType[];
-}
-
 export async function createProject(
   projectData: { slug: string; title: string; description: string; date: string; types: string[]; order?: number },
   images: ProjectImageType[]
 ): Promise<void> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
 
   const queries = [
     sql`INSERT INTO project (slug, title, description, date, types, "order")
@@ -161,10 +125,7 @@ export async function updateProject(
   projectData: { slug: string; title: string; description: string; date: string; types: string[] },
   images: ProjectImageType[]
 ): Promise<void> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
 
   const queries = [
     // Update project fields
@@ -190,10 +151,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(slug: string): Promise<void> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
 
   await sql.transaction([
     sql`DELETE FROM project_image WHERE project_slug = ${slug}`,
@@ -202,10 +160,7 @@ export async function deleteProject(slug: string): Promise<void> {
 }
 
 export async function updateProjectOrder(items: { slug: string; order: number }[]): Promise<void> {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-  }
-  const sql = neon(process.env.DATABASE_URL);
+  const sql = getSql();
 
   const queries = items.map((item) =>
     sql`UPDATE project SET "order" = ${item.order} WHERE slug = ${item.slug}`
