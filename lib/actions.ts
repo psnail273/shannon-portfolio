@@ -13,7 +13,6 @@ interface ProjectFormData {
   title: string;
   description: string;
   date: string;
-  protected: boolean;
   types: string[];
   images: ProjectImageType[];
 }
@@ -83,7 +82,6 @@ export async function createProjectAction(data: ProjectFormData): Promise<Action
         title: data.title.trim(),
         description: data.description.trim(),
         date: data.date,
-        protected: data.protected,
         types: data.types.filter((t) => t.trim() !== ''),
       },
       data.images.map((img, i) => ({
@@ -126,7 +124,6 @@ export async function updateProjectAction(originalSlug: string, data: ProjectFor
         title: data.title.trim(),
         description: data.description.trim(),
         date: data.date,
-        protected: data.protected,
         types: data.types.filter((t) => t.trim() !== ''),
       },
       data.images.map((img, i) => ({

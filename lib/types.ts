@@ -24,7 +24,6 @@ export interface ProjectType {
   title: string;
   description: string;
   date: string;
-  protected: boolean;
   types: string[];
   images: ProjectImageType[];
 }
