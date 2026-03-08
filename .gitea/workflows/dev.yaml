@@ -58,6 +58,10 @@ jobs:
             PASSWORD=${{ secrets.DEV_PASSWORD }}
             DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
             ADMIN_PASSWORD=${{ secrets.DEV_ADMIN_PASSWORD }}
+            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            CLOUDINARY_FOLDER=${{ secrets.CLOUDINARY_FOLDER }}
           cache-from: type=registry,ref=git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
           cache-to: type=inline
 
@@ -103,6 +107,10 @@ jobs:
             -e PASSWORD="${{ secrets.DEV_PASSWORD }}" \
             -e DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}" \
             -e ADMIN_PASSWORD="${{ secrets.DEV_ADMIN_PASSWORD }}" \
+            -e CLOUDINARY_CLOUD_NAME="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+            -e CLOUDINARY_API_KEY="${{ secrets.CLOUDINARY_API_KEY }}" \
+            -e CLOUDINARY_API_SECRET="${{ secrets.CLOUDINARY_API_SECRET }}" \
+            -e CLOUDINARY_FOLDER="${{ secrets.CLOUDINARY_FOLDER }}" \
             "$IMAGE"
 
           echo "Deployed version ${VERSION}"
