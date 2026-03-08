@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev
-      
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -16,6 +16,21 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # Calculate previous version for cleanup
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PREV_PATCH=$((PATCH - 1))
+          if [ "$PREV_PATCH" -ge 0 ]; then
+            echo "PREV_VERSION=${MAJOR}.${MINOR}.${PREV_PATCH}" >> "$GITHUB_OUTPUT"
+          else
+            echo "PREV_VERSION=" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -33,7 +48,8 @@ jobs:
           context: .
           push: true
           tags: |
-            git.stuffworks.net/psnail273/shannon-portfolio-dev:latest       
+            git.stuffworks.net/psnail273/shannon-portfolio-dev:${{ steps.version.outputs.VERSION }}
+            git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
           build-args: |
             NEXT_PUBLIC_DEV_MODE=true
             NEXT_PUBLIC_SITE_URL=https://shannon.stuffworks.net
@@ -44,12 +60,40 @@ jobs:
           cache-from: type=registry,ref=git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
           cache-to: type=inline
 
+      - name: Delete previous version from registry
+        if: steps.version.outputs.PREV_VERSION != ''
+        continue-on-error: true
+        run: |
+          PREV_VERSION="${{ steps.version.outputs.PREV_VERSION }}"
+          echo "Attempting to delete version ${PREV_VERSION} from registry..."
+
+          # List package versions and find the one matching PREV_VERSION
+          PACKAGE_ID=$(curl -s \
+            -H "Authorization: token ${{ secrets.REGISTRY_TOKEN }}" \
+            "https://git.stuffworks.net/api/v1/packages/psnail273?type=container&q=shannon-portfolio-dev" \
+            | jq -r ".[] | select(.version == \"${PREV_VERSION}\") | .id")
+
+          if [ -n "$PACKAGE_ID" ] && [ "$PACKAGE_ID" != "null" ]; then
+            curl -s -X DELETE \
+              -H "Authorization: token ${{ secrets.REGISTRY_TOKEN }}" \
+              "https://git.stuffworks.net/api/v1/packages/psnail273/${PACKAGE_ID}"
+            echo "Deleted version ${PREV_VERSION} (package ID: ${PACKAGE_ID})"
+          else
+            echo "Previous version ${PREV_VERSION} not found in registry, skipping"
+          fi
+
       - name: Deploy container
         run: |
-          IMAGE="git.stuffworks.net/psnail273/shannon-portfolio-dev:latest"
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          IMAGE="git.stuffworks.net/psnail273/shannon-portfolio-dev:${VERSION}"
+
           docker pull "$IMAGE"
           docker stop shannon-portfolio-dev || true
           docker rm shannon-portfolio-dev || true
+
+          # Remove dangling images to free disk space
+          docker image prune -f
+
           docker run -d \
             --name shannon-portfolio-dev \
             --restart unless-stopped \
@@ -58,3 +102,5 @@ jobs:
             -e PASSWORD="${{ secrets.DEV_PASSWORD }}" \
             -e DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}" \
             "$IMAGE"
+
+          echo "Deployed version ${VERSION}"
