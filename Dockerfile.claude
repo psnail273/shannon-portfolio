@@ -1,0 +1,28 @@
+# Dockerfile.claude — Drop into any repo, run claude-start
+FROM node:22-slim
+
+# Avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install essentials (git, ripgrep, etc. that Claude Code expects)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    ripgrep \
+    ca-certificates \
+    bash \
+    jq \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /workspaces && chown node:node /workspaces
+
+ENV HOME=/home/node
+
+RUN npm install -g @anthropic-ai/claude-code
+
+USER node
+
+WORKDIR /workspaces
+
+ENTRYPOINT ["/bin/bash", "-c", "exec claude --dangerously-skip-permissions \"$@\"", "--"]

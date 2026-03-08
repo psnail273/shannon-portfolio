@@ -40,7 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# AI tools
-.claude/
-.playwright-mcp/
-docs
+# ai
+.claude-home/
+.claude.json
