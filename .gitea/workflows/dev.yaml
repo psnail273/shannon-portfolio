@@ -57,6 +57,7 @@ jobs:
             AUTH_SECRET=${{ secrets.DEV_AUTH_SECRET }}
             PASSWORD=${{ secrets.DEV_PASSWORD }}
             DATABASE_URL=${{ secrets.DEV_DATABASE_URL }}
+            ADMIN_PASSWORD=${{ secrets.DEV_ADMIN_PASSWORD }}
           cache-from: type=registry,ref=git.stuffworks.net/psnail273/shannon-portfolio-dev:latest
           cache-to: type=inline
 
@@ -101,6 +102,7 @@ jobs:
             -e AUTH_SECRET="${{ secrets.DEV_AUTH_SECRET }}" \
             -e PASSWORD="${{ secrets.DEV_PASSWORD }}" \
             -e DATABASE_URL="${{ secrets.DEV_DATABASE_URL }}" \
+            -e ADMIN_PASSWORD="${{ secrets.DEV_ADMIN_PASSWORD }}" \
             "$IMAGE"
 
           echo "Deployed version ${VERSION}"
