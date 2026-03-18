@@ -1,0 +1,4 @@
+[submodule "claude-containerized"]
+	path = claude-containerized
+	url = git@git.stuffworks.net:psnail273/claude-containerized.git
+	branch = dev
