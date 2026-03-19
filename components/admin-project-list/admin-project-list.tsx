@@ -35,7 +35,7 @@ function DragHandle({ listeners, attributes }: { listeners?: React.HTMLAttribute
   return (
     <button
       type="button"
-      className="cursor-grab active:cursor-grabbing touch-none p-1 text-[#8d8d8d] hover:text-[#171717] transition-colors shrink-0"
+      className="cursor-grab active:cursor-grabbing touch-none p-1 text-muted hover:text-foreground transition-colors shrink-0"
       aria-label="Drag to reorder"
       { ...attributes }
       { ...listeners }
@@ -81,12 +81,12 @@ function SortableProjectCard({ project, onEdit, deletingSlug, confirmSlug, onDel
     <div
       ref={ setNodeRef }
       style={ style }
-      className="border border-[#171717]/10 rounded-sm p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 bg-white"
+      className="border border-border-subtle rounded-sm p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 bg-surface"
     >
       <DragHandle listeners={ listeners } attributes={ attributes } />
 
       { project.images.length > 0 && (
-        <div className="w-12 h-12 shrink-0 rounded-sm overflow-hidden bg-[#171717]/5">
+        <div className="w-12 h-12 shrink-0 rounded-sm overflow-hidden bg-hover-bg">
           <Image
             loader={ cloudinaryLoader }
             src={ project.images[0].src }
@@ -101,7 +101,7 @@ function SortableProjectCard({ project, onEdit, deletingSlug, confirmSlug, onDel
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium truncate">{ project.title }</span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-[#8d8d8d] mt-1 flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-muted mt-1 flex-wrap">
           <span>{ project.slug }</span>
           <span>{ project.images.length } image{ project.images.length !== 1 ? 's' : '' }</span>
           { project.types.length > 0 && (
@@ -113,7 +113,7 @@ function SortableProjectCard({ project, onEdit, deletingSlug, confirmSlug, onDel
       <div className="flex gap-2 shrink-0">
         <button
           onClick={ () => onEdit(project) }
-          className="px-3 py-1.5 text-sm rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors duration-200"
+          className="px-3 py-1.5 text-sm rounded-sm border border-border hover:bg-hover-bg transition-colors duration-200"
         >
           Edit
         </button>
@@ -128,7 +128,7 @@ function SortableProjectCard({ project, onEdit, deletingSlug, confirmSlug, onDel
             </button>
             <button
               onClick={ onCancelDelete }
-              className="px-3 py-1.5 text-sm rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors duration-200"
+              className="px-3 py-1.5 text-sm rounded-sm border border-border hover:bg-hover-bg transition-colors duration-200"
             >
               Cancel
             </button>
@@ -232,12 +232,12 @@ export default function AdminProjectList({ projects: initialProjects, onEdit, on
         <div className="flex items-center gap-3">
           <h2 className="text-2xl font-playfair">Projects</h2>
           { isSavingOrder && (
-            <span className="text-xs text-[#8d8d8d]">Saving order...</span>
+            <span className="text-xs text-muted">Saving order...</span>
           ) }
         </div>
         <button
           onClick={ onCreate }
-          className="px-4 py-2 rounded-sm bg-[#b997ce] text-white font-medium hover:bg-[#a67fbc] transition-colors duration-200"
+          className="px-4 py-2 rounded-sm bg-accent text-white font-medium hover:bg-accent-hover transition-colors duration-200"
         >
           New Project
         </button>
@@ -250,7 +250,7 @@ export default function AdminProjectList({ projects: initialProjects, onEdit, on
       ) }
 
       { projects.length === 0 ? (
-        <p className="text-[#8d8d8d] text-center py-8">No projects yet. Create your first project!</p>
+        <p className="text-muted text-center py-8">No projects yet. Create your first project!</p>
       ) : (
         <DndContext
           id={ dndId }

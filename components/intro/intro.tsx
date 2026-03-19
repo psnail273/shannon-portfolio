@@ -60,7 +60,7 @@ export default function Intro() {
       <span
         className={ [
           'inline-block transition-colors duration-300 rounded-sm px-1 -mx-1',
-          phase === 'highlighting' ? 'bg-[#b997ce] text-white' : 'bg-transparent',
+          phase === 'highlighting' ? 'bg-accent text-white' : 'bg-transparent',
         ].join(' ') }
       >
         { displayedWord }

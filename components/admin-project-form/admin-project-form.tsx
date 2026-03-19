@@ -56,7 +56,7 @@ function DragHandle({ listeners, attributes }: { listeners?: React.HTMLAttribute
   return (
     <button
       type="button"
-      className="cursor-grab active:cursor-grabbing touch-none p-1 text-[#8d8d8d] hover:text-[#171717] transition-colors"
+      className="cursor-grab active:cursor-grabbing touch-none p-1 text-muted hover:text-foreground transition-colors"
       aria-label="Drag to reorder"
       { ...attributes }
       { ...listeners }
@@ -111,7 +111,7 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange, onUpl
     <div
       ref={ setNodeRef }
       style={ style }
-      className="border border-[#171717]/10 rounded-sm p-4 flex flex-col gap-3 bg-white"
+      className="border border-border-subtle rounded-sm p-4 flex flex-col gap-3 bg-surface"
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange, onUpl
       />
 
       <div>
-        <label className="text-xs text-[#8d8d8d]">Alt text</label>
+        <label className="text-xs text-muted">Alt text</label>
         <input
           type="text"
           value={ image.alt }
@@ -312,8 +312,8 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
     }
   };
 
-  const inputClass = 'w-full rounded-sm border border-[#171717]/20 px-4 py-3 text-[#171717] bg-white focus:outline-none focus:ring-2 focus:ring-[#b997ce] focus:border-transparent transition-all duration-200';
-  const labelClass = 'block text-sm font-medium text-[#171717] mb-1';
+  const inputClass = 'w-full rounded-sm border border-border px-4 py-3 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200';
+  const labelClass = 'block text-sm font-medium text-foreground mb-1';
 
   return (
     <div className="flex flex-col gap-4">
@@ -323,7 +323,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
         </h2>
         <button
           onClick={ onCancel }
-          className="px-4 py-2 rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors duration-200 text-sm"
+          className="px-4 py-2 rounded-sm border border-border hover:bg-hover-bg transition-colors duration-200 text-sm"
         >
           Back to List
         </button>
@@ -368,7 +368,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
             required
           />
           { slug && !SLUG_REGEX.test(slug) && (
-            <p className="text-[#c97c7c] text-xs mt-1">Must be kebab-case (e.g. my-project-name)</p>
+            <p className="text-error text-xs mt-1">Must be kebab-case (e.g. my-project-name)</p>
           ) }
         </div>
 
@@ -403,7 +403,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
           <span className={ labelClass }>Images *</span>
 
           { images.length === 0 && (
-            <p className="text-[#8d8d8d] text-sm">No images added yet.</p>
+            <p className="text-muted text-sm">No images added yet.</p>
           ) }
 
           <DndContext
@@ -434,7 +434,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
           <button
             type="button"
             onClick={ handleAddImage }
-            className="px-3 py-1.5 text-sm rounded-sm bg-[#b997ce] text-white hover:bg-[#a67fbc] transition-colors duration-200 self-start"
+            className="px-3 py-1.5 text-sm rounded-sm bg-accent text-white hover:bg-accent-hover transition-colors duration-200 self-start"
           >
             Add Image
           </button>
@@ -445,7 +445,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
           <button
             type="submit"
             disabled={ isSubmitting }
-            className="flex-1 sm:flex-none px-6 py-3 rounded-sm bg-[#b997ce] text-white font-medium hover:bg-[#a67fbc] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex-1 sm:flex-none px-6 py-3 rounded-sm bg-accent text-white font-medium hover:bg-accent-hover transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             { isSubmitting
               ? (isEditing ? 'Updating...' : 'Creating...')
@@ -456,7 +456,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
             type="button"
             onClick={ onCancel }
             disabled={ isSubmitting }
-            className="flex-1 sm:flex-none px-6 py-3 rounded-sm border border-[#171717]/20 hover:bg-[#171717]/5 transition-colors duration-200 disabled:opacity-60"
+            className="flex-1 sm:flex-none px-6 py-3 rounded-sm border border-border hover:bg-hover-bg transition-colors duration-200 disabled:opacity-60"
           >
             Cancel
           </button>

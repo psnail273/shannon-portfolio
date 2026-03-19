@@ -1,25 +1,56 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --max-width: 1200px;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-playfair: var(--font-playfair);
-}
-
 @theme {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-accent: #b997ce;
+  --color-accent-hover: #a67fbc;
+  --color-muted: #8d8d8d;
+  --color-error: #c97c7c;
+  --color-surface: #ffffff;
+  --color-border: rgba(23, 23, 23, 0.2);
+  --color-border-subtle: rgba(23, 23, 23, 0.1);
+  --color-hover-bg: rgba(23, 23, 23, 0.05);
   --breakpoint-xs: 480px;
 }
 
+@theme inline {
+  --font-playfair: var(--font-playfair);
+}
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-accent: #b997ce;
+  --color-accent-hover: #a67fbc;
+  --color-muted: #8d8d8d;
+  --color-error: #c97c7c;
+  --color-surface: #ffffff;
+  --color-border: rgba(23, 23, 23, 0.2);
+  --color-border-subtle: rgba(23, 23, 23, 0.1);
+  --color-hover-bg: rgba(23, 23, 23, 0.05);
+  --max-width: 1200px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #1a1a2e;
+    --color-foreground: #f0ece6;
+    --color-accent: #d4a76a;
+    --color-accent-hover: #c0955c;
+    --color-muted: #9898a8;
+    --color-error: #d98e8e;
+    --color-surface: #24243a;
+    --color-border: rgba(212, 167, 106, 0.2);
+    --color-border-subtle: rgba(212, 167, 106, 0.1);
+    --color-hover-bg: rgba(212, 167, 106, 0.05);
+  }
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-family: Roboto, Helvetica, Arial, sans-serif;
   max-width: var(--max-width);
   margin: auto;
@@ -27,5 +58,5 @@ body {
 
 .prose ul > li::marker,
 .prose ol > li::marker {
-  color: #b997ce;
+  color: var(--color-accent);
 }

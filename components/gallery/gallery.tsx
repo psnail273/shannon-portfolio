@@ -71,7 +71,7 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
                   transitionDelay: `${getDelayFromSlug(image.slug)}ms`
                 } }
               >
-                <div className={ `${allImagesLoaded ? 'flex' : 'hidden'} absolute z-10 text-white flex-col gap-2 justify-end p-10 inset-0 bg-[#b997ce]/0 group-hover:bg-[#b997ce]/75 group-active:bg-[#b997ce]/75 group-focus-visible:bg-[#b997ce]/75 transition-colors duration-400 ease-in-out` }>
+                <div className={ `${allImagesLoaded ? 'flex' : 'hidden'} absolute z-10 text-white flex-col gap-2 justify-end p-10 inset-0 bg-accent/0 group-hover:bg-accent/75 group-active:bg-accent/75 group-focus-visible:bg-accent/75 transition-colors duration-400 ease-in-out` }>
                   <span 
                     className="text-3xl font-playfair capitalize opacity-0 transition-all duration-400 ease-in-out group-hover:-translate-y-[15px] group-hover:opacity-100 group-active:-translate-y-[15px] group-active:opacity-100 group-focus-visible:-translate-y-[15px] group-focus-visible:opacity-100"
                   >{ image.name }</span>

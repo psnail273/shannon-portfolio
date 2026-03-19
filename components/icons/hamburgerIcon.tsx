@@ -28,7 +28,7 @@ export default function HamburgerMenu() {
         y1="33.5"
         x2="36"
         y2="33.5"
-        stroke="#000000"
+        stroke="currentColor"
         initial={ { pathLength: 0, opacity: 0 } }
         animate={ { pathLength: 1, opacity: 1 } }
         transition={ {
@@ -42,7 +42,7 @@ export default function HamburgerMenu() {
         y1="26"
         x2="46"
         y2="26"
-        stroke="#000000"
+        stroke="currentColor"
         initial={ { pathLength: 0, opacity: 0 } }
         animate={ { pathLength: 1, opacity: 1 } }
         transition={ {
@@ -56,7 +56,7 @@ export default function HamburgerMenu() {
         y1="18.5"
         x2="46"
         y2="18.5"
-        stroke="#000000"
+        stroke="currentColor"
         initial={ { pathLength: 0, opacity: 0 } }
         animate={ { pathLength: 1, opacity: 1 } }
         transition={ {
@@ -72,7 +72,7 @@ export default function HamburgerMenu() {
             y="16"
             width="30"
             height="5"
-            fill="white"
+            fill="var(--color-background)"
             initial={ { x: -60 } }
             animate={ { x: 40 } }
             transition={ { delay: 0, duration: 0.75 } }
@@ -82,7 +82,7 @@ export default function HamburgerMenu() {
             y="24"
             width="30"
             height="5"
-            fill="white"
+            fill="var(--color-background)"
             initial={ { x: -60 } }
             animate={ { x: 40 } }
             transition={ { delay: 0.25, duration: 0.75 } }
@@ -92,7 +92,7 @@ export default function HamburgerMenu() {
             y="32"
             width="20"
             height="5"
-            fill="white"
+            fill="var(--color-background)"
             initial={ { x: -60 } }
             animate={ { x: 40 } }
             transition={ { delay: 0.5, duration: 0.75 } }

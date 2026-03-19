@@ -22,7 +22,7 @@ export default async function GalleryItem({ project }: { project: ProjectType })
         <div className="prose prose-md">
           <Markdown>{ project.description }</Markdown>
         </div>
-        <hr className="w-full h-[2px] border-none bg-[#8d8d8d]/30"/>
+        <hr className="w-full h-[2px] border-none bg-muted/30"/>
       </div>
     </div>
   );
