@@ -3,8 +3,6 @@ import Image from 'next/image';
 import Markdown from 'react-markdown';
 
 export default async function GalleryItem({ project }: { project: ProjectType }) {
-  const date = new Date(project.date);
-
   return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 justify-between items-start px-8">
       <div className="flex flex-col gap-4 w-full" >
@@ -25,7 +23,6 @@ export default async function GalleryItem({ project }: { project: ProjectType })
           <Markdown>{ project.description }</Markdown>
         </div>
         <hr className="w-full h-[2px] border-none bg-[#8d8d8d]/30"/>
-        <div className="">Created on { date.toLocaleDateString() }</div>
       </div>
     </div>
   );

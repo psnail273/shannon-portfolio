@@ -103,7 +103,6 @@ function SortableProjectCard({ project, onEdit, deletingSlug, confirmSlug, onDel
         </div>
         <div className="flex items-center gap-3 text-xs text-[#8d8d8d] mt-1 flex-wrap">
           <span>{ project.slug }</span>
-          <span>{ new Date(project.date).toLocaleDateString('en-US', { timeZone: 'UTC' }) }</span>
           <span>{ project.images.length } image{ project.images.length !== 1 ? 's' : '' }</span>
           { project.types.length > 0 && (
             <span>{ project.types.join(', ') }</span>

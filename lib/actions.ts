@@ -12,7 +12,6 @@ interface ProjectFormData {
   slug: string;
   title: string;
   description: string;
-  date: string;
   types: string[];
   images: ProjectImageType[];
 }
@@ -37,9 +36,6 @@ function validateProjectData(data: ProjectFormData): string | null {
   }
   if (!data.description || !data.description.trim()) {
     return 'Description is required.';
-  }
-  if (!data.date) {
-    return 'Date is required.';
   }
   if (!data.images || data.images.length === 0) {
     return 'At least one image is required.';
@@ -81,7 +77,6 @@ export async function createProjectAction(data: ProjectFormData): Promise<Action
         slug: data.slug,
         title: data.title.trim(),
         description: data.description.trim(),
-        date: data.date,
         types: data.types.filter((t) => t.trim() !== ''),
       },
       data.images.map((img, i) => ({
@@ -123,7 +118,6 @@ export async function updateProjectAction(originalSlug: string, data: ProjectFor
         slug: data.slug,
         title: data.title.trim(),
         description: data.description.trim(),
-        date: data.date,
         types: data.types.filter((t) => t.trim() !== ''),
       },
       data.images.map((img, i) => ({

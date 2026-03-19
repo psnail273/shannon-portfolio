@@ -154,7 +154,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
   const [slug, setSlug] = useState(project?.slug ?? '');
   const [title, setTitle] = useState(project?.title ?? '');
   const [description, setDescription] = useState(project?.description ?? '');
-  const [date, setDate] = useState(project?.date ? new Date(project.date).toISOString().split('T')[0] : '');
   const [typesInput, setTypesInput] = useState(project?.types.join(', ') ?? '');
   const [images, setImages] = useState<ImageWithId[]>(
     project?.images.length ? toImagesWithId(project.images) : []
@@ -259,11 +258,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       setIsSubmitting(false);
       return;
     }
-    if (!date) {
-      setError('Date is required.');
-      setIsSubmitting(false);
-      return;
-    }
     // Filter out empty image slots (user added slot but never uploaded)
     const validImages = images.filter((img) => img.src.trim() !== '');
 
@@ -289,7 +283,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
       slug,
       title: title.trim(),
       description: description.trim(),
-      date,
       types,
       images: validImages.map((img, i) => ({
         src: img.src.trim(),
@@ -388,19 +381,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
             onChange={ (e) => setDescription(e.target.value) }
             className={ `${inputClass} min-h-[120px] resize-y` }
             placeholder="Project description (supports Markdown)"
-            required
-          />
-        </div>
-
-        { /* Date */ }
-        <div>
-          <label htmlFor="date" className={ labelClass }>Date *</label>
-          <input
-            id="date"
-            type="date"
-            value={ date }
-            onChange={ (e) => setDate(e.target.value) }
-            className={ inputClass }
             required
           />
         </div>

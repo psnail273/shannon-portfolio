@@ -4,7 +4,6 @@ export interface GalleryImageType {
   slug: string;
   name: string;
   description: string;
-  date: string;
   width: number;
   height: number;
   types: string[];
@@ -23,7 +22,6 @@ export interface ProjectType {
   slug: string;
   title: string;
   description: string;
-  date: string;
   types: string[];
   images: ProjectImageType[];
 }

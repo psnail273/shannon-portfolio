@@ -19,7 +19,6 @@ export async function getImages (): Promise<GalleryImageType[]> {
       slug,
       name,
       description,
-      date,
       width,
       height,
       types
@@ -38,7 +37,6 @@ export async function getImageBySlug(slug: string): Promise<GalleryImageType | n
       slug,
       name,
       description,
-      date,
       width,
       height,
       types
@@ -55,7 +53,6 @@ export async function getProjects(): Promise<ProjectType[]> {
       p.slug,
       p.title,
       p.description,
-      p.date,
       p.types,
       COALESCE(
         json_agg(
@@ -67,8 +64,8 @@ export async function getProjects(): Promise<ProjectType[]> {
     FROM project p
     LEFT JOIN project_image pi ON p.slug = pi.project_slug
     LEFT JOIN image i ON pi.image_src = i.src
-    GROUP BY p.slug, p.title, p.description, p.date
-    ORDER BY p."order" ASC, p.date DESC;`
+    GROUP BY p.slug, p.title, p.description
+    ORDER BY p."order" ASC;`
   return response as unknown as ProjectType[];
 }
 
@@ -79,7 +76,6 @@ export async function getProjectBySlug(slug: string): Promise<ProjectType | null
       p.slug,
       p.title,
       p.description,
-      p.date,
       p.types,
       COALESCE(
         json_agg(
@@ -92,19 +88,19 @@ export async function getProjectBySlug(slug: string): Promise<ProjectType | null
     LEFT JOIN project_image pi ON p.slug = pi.project_slug
     LEFT JOIN image i ON pi.image_src = i.src
     WHERE p.slug=${slug}
-    GROUP BY p.slug, p.title, p.description, p.date;`
+    GROUP BY p.slug, p.title, p.description;`
   return response[0] as unknown as ProjectType;
 }
 
 export async function createProject(
-  projectData: { slug: string; title: string; description: string; date: string; types: string[]; order?: number },
+  projectData: { slug: string; title: string; description: string; types: string[]; order?: number },
   images: ProjectImageType[]
 ): Promise<void> {
   const sql = getSql();
 
   const queries = [
-    sql`INSERT INTO project (slug, title, description, date, types, "order")
-        VALUES (${projectData.slug}, ${projectData.title}, ${projectData.description}, ${projectData.date}, ${projectData.types}, ${projectData.order ?? 0})`,
+    sql`INSERT INTO project (slug, title, description, types, "order")
+        VALUES (${projectData.slug}, ${projectData.title}, ${projectData.description}, ${projectData.types}, ${projectData.order ?? 0})`,
     ...images.map((img) =>
       sql`INSERT INTO image (src, alt, width, height, "order")
           VALUES (${img.src}, ${img.alt}, ${img.width}, ${img.height}, ${img.order})
@@ -122,7 +118,7 @@ export async function createProject(
 
 export async function updateProject(
   originalSlug: string,
-  projectData: { slug: string; title: string; description: string; date: string; types: string[] },
+  projectData: { slug: string; title: string; description: string; types: string[] },
   images: ProjectImageType[]
 ): Promise<void> {
   const sql = getSql();
@@ -131,7 +127,7 @@ export async function updateProject(
     // Update project fields
     sql`UPDATE project
         SET slug = ${projectData.slug}, title = ${projectData.title}, description = ${projectData.description},
-            date = ${projectData.date}, types = ${projectData.types}
+            types = ${projectData.types}
         WHERE slug = ${originalSlug}`,
     // Remove all existing image associations for this project
     sql`DELETE FROM project_image WHERE project_slug = ${originalSlug}`,
