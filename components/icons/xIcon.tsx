@@ -18,7 +18,7 @@ export default function XIcon() {
       width="56"
       height="56"
       viewBox="0 0 56 56"
-      stroke="#000000"
+      stroke="currentColor"
       strokeWidth="3"
       strokeLinecap="butt"
       animate={ { rotate: rotation } }

@@ -12,7 +12,7 @@ export default function SideMenu({ isSideMenuOpen, handleHamburgerMenuClose }: {
 
   return (
     <div
-      className={ `fixed flex text-2xl flex-col right-0 top-0 bottom-0 w-full sm:w-[51%] lg:w-[39%] bg-white z-2 transition-transform duration-1000 ease-in-out ${isSideMenuOpen ? 'translate-x-0' : 'translate-x-full'}` }
+      className={ `fixed flex text-2xl flex-col right-0 top-0 bottom-0 w-full sm:w-[51%] lg:w-[39%] bg-surface z-2 transition-transform duration-1000 ease-in-out ${isSideMenuOpen ? 'translate-x-0' : 'translate-x-full'}` }
     >
       <div className='flex flex-row items-center justify-end min-h-[150px] pr-8'>
         <button className='cursor-pointer' onClick={ handleHamburgerMenuClose }>
@@ -34,8 +34,8 @@ export default function SideMenu({ isSideMenuOpen, handleHamburgerMenuClose }: {
             target={ page.external ? '_blank' : undefined }
             rel={ page.external ? 'noopener noreferrer' : undefined }
           >
-            <hr className='absolute left-0 w-0 group-hover:w-5 group-active:w-5 group-focus-visible:w-5 sm:group-hover:w-12 sm:group-active:w-12 sm:group-focus-visible:w-12 lg:group-hover:w-20 lg:group-active:w-20 lg:group-focus-visible:w-20 transistion-transform duration-400 delay-150 ease-in-out top-4 bg-[#b997ce] h-1'/>
-            <li className='group-hover:text-[#b997ce] group-active:text-[#b997ce] group-focus-visible:text-[#b997ce] transition-colors duration-200 transition-ease-in-out px-8 sm:px-16 lg:px-24'>{ page.name }</li>
+            <hr className='absolute left-0 w-0 group-hover:w-5 group-active:w-5 group-focus-visible:w-5 sm:group-hover:w-12 sm:group-active:w-12 sm:group-focus-visible:w-12 lg:group-hover:w-20 lg:group-active:w-20 lg:group-focus-visible:w-20 transistion-transform duration-400 delay-150 ease-in-out top-4 bg-accent h-1'/>
+            <li className='group-hover:text-accent group-active:text-accent group-focus-visible:text-accent transition-colors duration-200 transition-ease-in-out px-8 sm:px-16 lg:px-24'>{ page.name }</li>
           </Link>
         )) }
       </ul>

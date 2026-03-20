@@ -189,7 +189,7 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
 
     return (
       <div className="flex flex-col gap-3">
-        <div className="relative inline-block self-start rounded-sm overflow-hidden border border-[#171717]/20">
+        <div className="relative inline-block self-start rounded-sm overflow-hidden border border-border">
           <Image
             loader={ cloudinaryLoader }
             src={ imageData.src }
@@ -211,7 +211,7 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
           <button
             type="button"
             onClick={ handleClick }
-            className="px-3 py-1.5 text-xs rounded-sm border border-[#171717]/20 text-[#8d8d8d] hover:bg-[#171717]/5 transition-colors duration-200"
+            className="px-3 py-1.5 text-xs rounded-sm border border-border text-muted hover:bg-hover-bg transition-colors duration-200"
           >
             Replace
           </button>
@@ -225,10 +225,10 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
   const isUploading = status === 'uploading';
 
   const borderClass = isError
-    ? 'border-[#c97c7c]'
+    ? 'border-error'
     : isDragOver
-      ? 'border-[#b997ce] bg-[#b997ce]/5'
-      : 'border-[#171717]/20';
+      ? 'border-accent bg-accent/5'
+      : 'border-border';
 
   return (
     <div className="flex flex-col gap-2">
@@ -246,15 +246,15 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
           border-2 border-dashed rounded-sm
           transition-colors duration-200
           ${borderClass}
-          ${isUploading ? 'cursor-default pointer-events-none opacity-70' : 'cursor-pointer hover:border-[#b997ce] hover:bg-[#b997ce]/5'}
-          focus:outline-none focus:ring-2 focus:ring-[#b997ce] focus:border-transparent
+          ${isUploading ? 'cursor-default pointer-events-none opacity-70' : 'cursor-pointer hover:border-accent hover:bg-accent/5'}
+          focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent
         ` }
         aria-label="Image upload area. Drag and drop an image or click to browse."
       >
         { isUploading ? (
           <div className="flex flex-col items-center gap-3 w-full max-w-xs">
             <svg
-              className="w-8 h-8 text-[#b997ce] animate-spin"
+              className="w-8 h-8 text-accent animate-spin"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -273,14 +273,14 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            <div className="w-full bg-[#171717]/10 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-border-subtle rounded-full h-2 overflow-hidden">
               <div
-                className="bg-[#b997ce] h-full rounded-full transition-all duration-300"
+                className="bg-accent h-full rounded-full transition-all duration-300"
                 style={ { width: `${progress}%` } }
               />
             </div>
             <span
-              className="text-sm text-[#8d8d8d]"
+              className="text-sm text-muted"
               aria-live="polite"
             >
               Uploading... { progress }%
@@ -289,7 +289,7 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
         ) : (
           <>
             <svg
-              className="w-10 h-10 text-[#8d8d8d]"
+              className="w-10 h-10 text-muted"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -302,10 +302,10 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            <span className="text-sm text-[#8d8d8d]">
+            <span className="text-sm text-muted">
               Drag image here or click to browse
             </span>
-            <span className="text-xs text-[#8d8d8d]/60">
+            <span className="text-xs text-muted/60">
               JPEG, PNG, or WebP
             </span>
           </>
@@ -313,7 +313,7 @@ export default function ImageUpload({ initialImage, onUploadSuccess, onRemove }:
       </div>
 
       { isError && errorMessage && (
-        <p role="alert" className="text-sm text-[#c97c7c]">
+        <p role="alert" className="text-sm text-error">
           { errorMessage }
         </p>
       ) }

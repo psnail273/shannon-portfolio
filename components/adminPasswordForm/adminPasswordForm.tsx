@@ -41,7 +41,7 @@ export default function AdminPasswordForm() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <p className="text-sm text-[#171717]/60 mb-4">Admin access required</p>
+      <p className="text-sm text-foreground/60 mb-4">Admin access required</p>
       <form onSubmit={ handleSubmit } className="flex flex-col gap-2 w-full max-w-sm">
         <div className="space-y-3">
           <input
@@ -49,15 +49,15 @@ export default function AdminPasswordForm() {
             id="admin-password"
             value={ password }
             onChange={ (e) => setPassword(e.target.value) }
-            className="w-full rounded-sm border border-[#171717]/20 px-4 py-3 text-[#171717] bg-white focus:outline-none focus:ring-2 focus:ring-[#b997ce] focus:border-transparent transition-all duration-200"
+            className="w-full rounded-sm border border-border px-4 py-3 text-foreground bg-surface focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200"
             placeholder="Enter admin password"
             required
           />
         </div>
-        { error && <p className="text-[#c97c7c] text-center text-sm">{ error }</p> }
+        { error && <p className="text-error text-center text-sm">{ error }</p> }
         <button
           type="submit"
-          className="w-full py-3 rounded-sm bg-[#b997ce] text-white font-medium hover:bg-[#a67fbc] transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full py-3 rounded-sm bg-accent text-white font-medium hover:bg-accent-hover transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           disabled={ isLoading }
         >
           { isLoading ? 'Verifying...' : 'Submit' }
