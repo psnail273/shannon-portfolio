@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { verifyAdminAuthToken } from './auth';
-import { createProject, updateProject, deleteProject, updateProjectOrder } from './db';
+import { createProject, updateProject, deleteProject, updateProjectOrder, upsertImage } from './db';
 import { ProjectImageType } from './types';
 
 export type ActionResult = { success: true } | { success: false; error: string };
@@ -183,5 +183,36 @@ export async function deleteProjectAction(slug: string): Promise<ActionResult> {
   } catch (err: unknown) {
     console.error('deleteProjectAction error:', err);
     return { success: false, error: 'Failed to delete project. Please try again.' };
+  }
+}
+
+export async function upsertImageAction(
+  image: { src: string; alt: string; width: number; height: number }
+): Promise<ActionResult> {
+  if (!await verifyAdminAuth()) {
+    return { success: false, error: 'Not authenticated.' };
+  }
+
+  if (!image.src || !image.src.startsWith('https://')) {
+    return { success: false, error: 'Valid image URL is required.' };
+  }
+  if (!image.alt || !image.alt.trim()) {
+    return { success: false, error: 'Alt text is required.' };
+  }
+  if (!image.width || image.width <= 0 || !image.height || image.height <= 0) {
+    return { success: false, error: 'Valid dimensions are required.' };
+  }
+
+  try {
+    await upsertImage({
+      src: image.src.trim(),
+      alt: image.alt.trim(),
+      width: image.width,
+      height: image.height,
+    });
+    return { success: true };
+  } catch (err: unknown) {
+    console.error('upsertImageAction error:', err);
+    return { success: false, error: 'Failed to save image. Please try again.' };
   }
 }
