@@ -46,6 +46,28 @@ export async function getImageBySlug(slug: string): Promise<GalleryImageType | n
   return response[0] as unknown as GalleryImageType;
 }
 
+export async function upsertImage(
+  image: { src: string; alt: string; width: number; height: number }
+): Promise<void> {
+  const sql = getSql();
+  await sql`
+    INSERT INTO image (src, alt, width, height, "order")
+    VALUES (${image.src}, ${image.alt}, ${image.width}, ${image.height}, 0)
+    ON CONFLICT (src) DO UPDATE SET alt = ${image.alt}, width = ${image.width}, height = ${image.height}
+  `;
+}
+
+export async function getImagesByUrls(
+  urls: string[]
+): Promise<{ src: string; width: number; height: number }[]> {
+  if (urls.length === 0) return [];
+  const sql = getSql();
+  const response = await sql`
+    SELECT src, width, height FROM image WHERE src = ANY(${urls})
+  `;
+  return response as unknown as { src: string; width: number; height: number }[];
+}
+
 export async function getProjects(): Promise<ProjectType[]> {
   const sql = getSql();
   const response = await sql`
