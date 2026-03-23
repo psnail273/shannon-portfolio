@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useId, useCallback } from 'react';
+import { useState, useId, useCallback, useRef } from 'react';
 import { ProjectType, ProjectImageType } from '@/lib/types';
-import { createProjectAction, updateProjectAction } from '@/lib/actions';
+import { createProjectAction, updateProjectAction, upsertImageAction } from '@/lib/actions';
 import ImageUpload from '@/components/image-upload/image-upload';
 import {
   DndContext,
@@ -163,6 +163,72 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [slugTouched, setSlugTouched] = useState(isEditing);
+
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+  const handleDescriptionDrop = useCallback(async (e: React.DragEvent<HTMLTextAreaElement>) => {
+    const files = e.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+
+    // Always prevent default for file drops to stop browser navigation
+    e.preventDefault();
+    e.stopPropagation();
+
+    const file = files[0];
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) return;
+
+    const textarea = descriptionRef.current;
+    const cursorPos = textarea?.selectionStart ?? 0;
+    const placeholderId = Date.now();
+    const placeholder = `![Uploading image-${placeholderId}...]()`;
+
+    // Insert placeholder at cursor position using functional setState to avoid stale closure
+    setDescription((prev) => {
+      const before = prev.slice(0, cursorPos);
+      const after = prev.slice(cursorPos);
+      return `${before}${placeholder}${after}`;
+    });
+
+    // Restore cursor position after React re-render
+    const newCursorPos = cursorPos + placeholder.length;
+    requestAnimationFrame(() => {
+      if (textarea) {
+        textarea.selectionStart = newCursorPos;
+        textarea.selectionEnd = newCursorPos;
+      }
+    });
+
+    // Upload to Cloudinary
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload/cloudinary', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error('Upload failed');
+      const { src, width, height } = await res.json();
+
+      // Derive alt text from filename
+      const altText = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+
+      // Upsert image to database for dimension tracking
+      await upsertImageAction({ src, alt: altText, width, height });
+
+      // Replace placeholder with actual markdown
+      setDescription((prev) => prev.replace(placeholder, `![${altText}](${src})`));
+    } catch {
+      // Remove placeholder on failure
+      setDescription((prev) => prev.replace(placeholder, ''));
+    }
+  }, []);
+
+  const handleDescriptionDragOver = useCallback((e: React.DragEvent<HTMLTextAreaElement>) => {
+    if (e.dataTransfer?.types?.includes('Files')) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -377,10 +443,13 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
           <label htmlFor="description" className={ labelClass }>Description * (Markdown supported)</label>
           <textarea
             id="description"
+            ref={ descriptionRef }
             value={ description }
             onChange={ (e) => setDescription(e.target.value) }
+            onDrop={ handleDescriptionDrop }
+            onDragOver={ handleDescriptionDragOver }
             className={ `${inputClass} min-h-[120px] resize-y` }
-            placeholder="Project description (supports Markdown)"
+            placeholder="Project description (supports Markdown). Drop images here to upload."
             required
           />
         </div>
