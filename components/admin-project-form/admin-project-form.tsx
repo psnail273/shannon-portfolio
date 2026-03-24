@@ -34,6 +34,7 @@ interface ImageWithId extends ProjectImageType {
 }
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 function toKebabCase(str: string): string {
   return str
@@ -165,8 +166,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
   const [slugTouched, setSlugTouched] = useState(isEditing);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
-  const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
   const handleDescriptionDrop = useCallback(async (e: React.DragEvent<HTMLTextAreaElement>) => {
     const files = e.dataTransfer?.files;
