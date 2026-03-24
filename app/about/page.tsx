@@ -7,7 +7,7 @@ export default function About() {
       <div className="flex flex-col gap-8 py-2 sm:py-4 md:py-8 xl:py-12 px-8">
         <div className="text-5xl  font-playfair">About</div>
         <Image src="/shannon_about.jpg" alt="Shannon" width={ 500 } height={ 500 } style={ { objectFit: 'contain' } }/>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 prose dark:prose-invert max-w-none">
           <div>
             I received my Bachelor&apos;s degree from Indiana State University with an emphasis in Graphic Design and Art History in 2011. After working for our student newspaper and excelling in both design and sales roles, I went on to work for Schurz Communications, a multimedia design agency, for 3 years post graduation. From there I was a Marketing Assistant for Simon Property Group, helming our social media accounts and organizing special events. In recent years, I&apos;ve worked with Eli Lilly and Bayer Crop Science as a Product Designer on internal applications to help employees more easily complete their work. 
           </div>

@@ -1,5 +1,6 @@
 import { ProjectType } from '@/lib/types';
 import { getImagesByUrls } from '@/lib/db';
+import { altTextFromSrc } from '@/lib/image-utils';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
 
@@ -26,7 +27,7 @@ export default async function GalleryItem({ project }: { project: ProjectType })
           <Image 
             key={ img.src }
             src={ img.src }
-            alt={ img.alt }
+            alt={ img.alt || altTextFromSrc(img.src) }
             width={ img.width }
             height={ img.height }
             className="object-contain w-full"
@@ -35,7 +36,7 @@ export default async function GalleryItem({ project }: { project: ProjectType })
       </div>
       <div className="flex flex-col gap-8 lg:max-w-[300px]">
         <div className="text-4xl font-playfair capitalize">{ project.title }</div>
-        <div className="prose prose-md">
+        <div className="prose prose-md dark:prose-invert">
           <Markdown
             components={ {
               img: (props) => {

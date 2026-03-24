@@ -6,6 +6,7 @@ import Masonry from '@mui/lab/Masonry';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ProjectType } from '@/lib/types';
+import { altTextFromSrc } from '@/lib/image-utils';
 import Filter from '../filter/filter';
 
 function getDelayFromSlug(slug: string): number {
@@ -82,7 +83,7 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
               
                 <Image 
                   src={ image.src }
-                  alt={ image.alt }
+                  alt={ image.alt || altTextFromSrc(image.src) }
                   width={ image.width }
                   height={ image.height }
                   className="object-contain"

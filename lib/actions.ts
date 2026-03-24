@@ -48,9 +48,6 @@ function validateProjectData(data: ProjectFormData): string | null {
     if (!img.src.startsWith('https://')) {
       return `Image ${i + 1}: URL must start with https://.`;
     }
-    if (!img.alt || !img.alt.trim()) {
-      return `Image ${i + 1}: Alt text is required.`;
-    }
     if (!img.width || img.width <= 0) {
       return `Image ${i + 1}: Width must be a positive number.`;
     }

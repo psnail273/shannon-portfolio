@@ -135,13 +135,13 @@ function SortableImageItem({ image, index, inputClass, onRemove, onChange, onUpl
       />
 
       <div>
-        <label className="text-xs text-muted">Alt text</label>
+        <label className="text-xs text-muted">Alt text (optional)</label>
         <input
           type="text"
           value={ image.alt }
           onChange={ (e) => onChange(index, 'alt', e.target.value) }
           className={ inputClass }
-          placeholder="Descriptive alt text"
+          placeholder="Defaults to image filename"
         />
       </div>
     </div>
@@ -328,13 +328,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
 
     if (validImages.length === 0) {
       setError('At least one image is required. Upload an image for each slot.');
-      setIsSubmitting(false);
-      return;
-    }
-
-    const missingAlt = validImages.some((img) => !img.alt.trim());
-    if (missingAlt) {
-      setError('All images must have alt text.');
       setIsSubmitting(false);
       return;
     }
