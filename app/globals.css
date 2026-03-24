@@ -35,16 +35,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #1a1a2e;
-    --color-foreground: #f0ece6;
-    --color-accent: #d4a76a;
-    --color-accent-hover: #c0955c;
-    --color-muted: #9898a8;
+    --color-background: #221c24;
+    --color-foreground: #ccccff;
+    --color-accent: #b997ce;
+    --color-accent-hover: #a67fbc;
+    --color-muted: #8a8a9e;
     --color-error: #d98e8e;
-    --color-surface: #24243a;
-    --color-border: rgba(212, 167, 106, 0.2);
-    --color-border-subtle: rgba(212, 167, 106, 0.1);
-    --color-hover-bg: rgba(212, 167, 106, 0.05);
+    --color-surface: #2d2530;
+    --color-border: rgba(185, 151, 206, 0.2);
+    --color-border-subtle: rgba(185, 151, 206, 0.1);
+    --color-hover-bg: rgba(185, 151, 206, 0.05);
   }
 }
 
