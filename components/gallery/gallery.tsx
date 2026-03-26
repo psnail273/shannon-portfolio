@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 import Masonry from '@mui/lab/Masonry';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ProjectType } from '@/lib/types';
 import { altTextFromSrc } from '@/lib/image-utils';
@@ -34,20 +34,13 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
   const [filteredProjects, setFilteredProjects] = useState(
     projects.filter((project) => project.types.includes(selectedFilter) || selectedFilter === 'All')
   );
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    const imagelessSlugs = filteredProjects
-      .filter((p) => p.images.length === 0)
-      .map((p) => p.slug);
-    if (imagelessSlugs.length > 0) {
-      setLoadedImages((prev) => {
-        const next = new Set(prev);
-        for (const slug of imagelessSlugs) next.add(slug);
-        return next;
-      });
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(() => {
+    const set = new Set<string>();
+    for (const p of projects) {
+      if (p.images.length === 0) set.add(p.slug);
     }
-  }, [filteredProjects]);
+    return set;
+  });
 
   const filters = useMemo(() => {
     const set = new Set<string>();
@@ -58,7 +51,12 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
   }, [projects]);
 
   const handleFilterClick = async (filter: string) => {
-    setLoadedImages(new Set());
+    const imagelessSlugs = new Set(
+      projects
+        .filter((p) => p.images.length === 0)
+        .map((p) => p.slug)
+    );
+    setLoadedImages(imagelessSlugs);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setSelectedFilter(filter);
     setFilteredProjects(projects.filter((project) => project.types.includes(filter) || filter === 'All'));
