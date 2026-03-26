@@ -326,12 +326,6 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
     // Filter out empty image slots (user added slot but never uploaded)
     const validImages = images.filter((img) => img.src.trim() !== '');
 
-    if (validImages.length === 0) {
-      setError('At least one image is required. Upload an image for each slot.');
-      setIsSubmitting(false);
-      return;
-    }
-
     const types = typesInput
       .split(',')
       .map((t) => t.trim())
@@ -461,7 +455,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
 
         { /* Images */ }
         <div className="flex flex-col gap-3">
-          <span className={ labelClass }>Images *</span>
+          <span className={ labelClass }>Images</span>
 
           { images.length === 0 && (
             <p className="text-muted text-sm">No images added yet.</p>
