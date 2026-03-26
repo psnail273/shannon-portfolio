@@ -434,7 +434,7 @@ export default function AdminProjectForm({ project, onCancel, onSuccess }: Admin
             onChange={ (e) => setDescription(e.target.value) }
             onDrop={ handleDescriptionDrop }
             onDragOver={ handleDescriptionDragOver }
-            className={ `${inputClass} min-h-[120px] resize-y` }
+            className={ `${inputClass} min-h-[240px] resize-y` }
             placeholder="Project description (supports Markdown). Drop images here to upload."
             required
           />

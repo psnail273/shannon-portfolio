@@ -3,7 +3,7 @@
 import Image from 'next/image';
 
 import Masonry from '@mui/lab/Masonry';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ProjectType } from '@/lib/types';
 import { altTextFromSrc } from '@/lib/image-utils';
@@ -20,6 +20,13 @@ interface GalleryEntry {
   height?: number;
 }
 
+function getTitleSize(name: string): string {
+  const len = name.length;
+  if (len <= 15) return 'text-3xl';
+  if (len <= 30) return 'text-2xl';
+  return 'text-xl';
+}
+
 function getDelayFromSlug(slug: string): number {
   let hash = 0;
   for (let i = 0; i < slug.length; i++) {
@@ -34,13 +41,20 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
   const [filteredProjects, setFilteredProjects] = useState(
     projects.filter((project) => project.types.includes(selectedFilter) || selectedFilter === 'All')
   );
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(() => {
-    const set = new Set<string>();
-    for (const p of projects) {
-      if (p.images.length === 0) set.add(p.slug);
-    }
-    return set;
-  });
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadedImages(prev => {
+        const next = new Set(prev);
+        for (const p of projects) {
+          if (p.images.length === 0) next.add(p.slug);
+        }
+        return next;
+      });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filters = useMemo(() => {
     const set = new Set<string>();
@@ -51,15 +65,19 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
   }, [projects]);
 
   const handleFilterClick = async (filter: string) => {
-    const imagelessSlugs = new Set(
-      projects
-        .filter((p) => p.images.length === 0)
-        .map((p) => p.slug)
-    );
-    setLoadedImages(imagelessSlugs);
+    setLoadedImages(new Set());
     await new Promise(resolve => setTimeout(resolve, 1000));
     setSelectedFilter(filter);
     setFilteredProjects(projects.filter((project) => project.types.includes(filter) || filter === 'All'));
+    setTimeout(() => {
+      setLoadedImages(prev => {
+        const next = new Set(prev);
+        for (const p of projects) {
+          if (p.images.length === 0) next.add(p.slug);
+        }
+        return next;
+      });
+    }, 300);
   }
 
   const galleryEntries: GalleryEntry[] = filteredProjects.map((project) => {
@@ -104,7 +122,7 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
               >
                 <div className={ `${allImagesLoaded ? 'flex' : 'hidden'} absolute z-10 text-white flex-col gap-2 justify-end p-10 inset-0 bg-accent/0 group-hover:bg-accent/75 group-active:bg-accent/75 group-focus-visible:bg-accent/75 transition-colors duration-400 ease-in-out` }>
                   <span
-                    className="text-3xl font-playfair capitalize opacity-0 transition-all duration-400 ease-in-out group-hover:-translate-y-[15px] group-hover:opacity-100 group-active:-translate-y-[15px] group-active:opacity-100 group-focus-visible:-translate-y-[15px] group-focus-visible:opacity-100"
+                    className={ `${getTitleSize(entry.name)} font-playfair capitalize opacity-0 transition-all duration-400 ease-in-out group-hover:-translate-y-[15px] group-hover:opacity-100 group-active:-translate-y-[15px] group-active:opacity-100 group-focus-visible:-translate-y-[15px] group-focus-visible:opacity-100` }
                   >{ entry.name }</span>
                   <span
                     className="text-xs uppercase opacity-0 transition-all duration-400 ease-in-out group-hover:-translate-y-[15px] group-hover:opacity-100 group-hover:delay-100 group-active:-translate-y-[15px] group-active:opacity-100 group-active:delay-100 group-focus-visible:-translate-y-[15px] group-focus-visible:opacity-100 group-focus-visible:delay-100"
@@ -125,7 +143,7 @@ export default function Gallery({ projects, uriPrefix = '/designs' }: { projects
                   />
                 ) : (
                   <div className="flex items-center justify-center aspect-[4/3] bg-surface border border-border-subtle">
-                    <span className="text-6xl font-playfair text-muted">Blog</span>
+                    <span className="text-5xl font-playfair text-muted -translate-y-6">Blog</span>
                   </div>
                 ) }
 
