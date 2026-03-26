@@ -20,21 +20,25 @@ export default async function GalleryItem({ project }: { project: ProjectType })
     dimensionMap[img.src] = { width: img.width, height: img.height };
   }
 
+  const hasImages = project.images.length > 0;
+
   return (
-    <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 justify-between items-start px-8">
-      <div className="flex flex-col gap-4 w-full" >
-        { project.images.map((img) => (
-          <Image 
-            key={ img.src }
-            src={ img.src }
-            alt={ img.alt || altTextFromSrc(img.src) }
-            width={ img.width }
-            height={ img.height }
-            className="object-contain w-full"
-          />
-        )) }
-      </div>
-      <div className="flex flex-col gap-8 lg:max-w-[300px]">
+    <div className={ `flex flex-col ${hasImages ? 'lg:flex-row' : ''} gap-8 lg:gap-10 justify-between items-start px-8` }>
+      { hasImages && (
+        <div className="flex flex-col gap-4 w-full">
+          { project.images.map((img) => (
+            <Image
+              key={ img.src }
+              src={ img.src }
+              alt={ img.alt || altTextFromSrc(img.src) }
+              width={ img.width }
+              height={ img.height }
+              className="object-contain w-full"
+            />
+          )) }
+        </div>
+      ) }
+      <div className={ `flex flex-col gap-8 ${hasImages ? 'lg:max-w-[300px]' : 'w-full'}` }>
         <div className="text-4xl font-playfair capitalize">{ project.title }</div>
         <div className="prose prose-md dark:prose-invert">
           <Markdown
