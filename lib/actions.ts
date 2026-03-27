@@ -37,9 +37,6 @@ function validateProjectData(data: ProjectFormData): string | null {
   if (!data.description || !data.description.trim()) {
     return 'Description is required.';
   }
-  if (!data.images || data.images.length === 0) {
-    return 'At least one image is required.';
-  }
   for (let i = 0; i < data.images.length; i++) {
     const img = data.images[i];
     if (!img.src || !img.src.trim()) {
