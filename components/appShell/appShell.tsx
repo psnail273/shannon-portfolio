@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import SideMenu from '@/components/sideMenu/sideMenu';
 import Header from '@/components/header/header';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface AppShellProps {
   children: React.ReactNode;
