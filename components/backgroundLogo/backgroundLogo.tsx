@@ -27,6 +27,7 @@ export default function BackgroundLogo() {
           src={ isDarkMode ? '/shannon_logo_light.png' : '/shannon_logo_dark.png' }
           alt="Shannon Logo"
           fill={ true }
+          sizes="(min-width: 1920px) 300px, 200px"
           priority
           className="object-contain"
         />
