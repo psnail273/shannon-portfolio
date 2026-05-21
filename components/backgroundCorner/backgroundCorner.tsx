@@ -9,6 +9,7 @@ export default function BackgroundCorner() {
           src="/corner.png"
           alt="Corner"
           fill={ true }
+          unoptimized
           sizes="(min-width: 1920px) 300px, 200px"
           priority
           className="object-contain"

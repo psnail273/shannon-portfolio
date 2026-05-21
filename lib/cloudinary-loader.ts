@@ -13,7 +13,7 @@ interface ImageLoaderProps {
 export default function cloudinaryLoader({ src, width, quality }: ImageLoaderProps): string {
   // Check if this is a Cloudinary URL
   if (!src.includes('cloudinary.com')) {
-    return src;
+    return `${src}?w=${width}`;
   }
 
   // Build transformation string
