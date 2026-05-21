@@ -39,7 +39,7 @@ export default async function RootLayout({
           <div className='mx-auto max-w-[1200px] flex-grow w-full'>
             <AppShell isAuthenticated={ isAuthenticated }>
               { isAuthenticated ? children : (
-                <div className="relative w-full flex flex-col items-center space-y-4 px-8">
+                <div className="relative w-full flex flex-col items-center space-y-4 px-8 py-16">
                   <div className="w-full">
                     <PasswordForm />
                   </div>
