@@ -13,6 +13,7 @@
   --color-border-subtle: rgba(23, 23, 23, 0.1);
   --color-hover-bg: rgba(23, 23, 23, 0.05);
   --breakpoint-xs: 480px;
+  --breakpoint-3xl: 1600px;
 }
 
 @theme inline {
@@ -30,7 +31,6 @@
   --color-border: rgba(23, 23, 23, 0.2);
   --color-border-subtle: rgba(23, 23, 23, 0.1);
   --color-hover-bg: rgba(23, 23, 23, 0.05);
-  --max-width: 1200px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -52,8 +52,6 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: Roboto, Helvetica, Arial, sans-serif;
-  max-width: var(--max-width);
-  margin: auto;
 }
 
 .prose ul > li::marker,

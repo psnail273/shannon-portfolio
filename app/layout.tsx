@@ -6,6 +6,8 @@ import DevBanner from '@/components/devBanner/devBanner';
 import { cookies } from 'next/headers';
 import PasswordForm from '@/components/passwordForm/passwordForm';
 import { verifyAuthToken } from '@/lib/auth';
+import BackgroundLogo from '@/components/backgroundLogo/backgroundLogo';
+import BackgroundCorner from '@/components/backgroundCorner/backgroundCorner';
 
 export const metadata: Metadata = {
   title: 'Shannon Portfolio',
@@ -31,16 +33,22 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={ `${playfair.variable} antialiased` }>
-        <DevBanner />
-        <AppShell isAuthenticated={ isAuthenticated }>
-          { isAuthenticated ? children : (
-            <div className="relative w-full flex flex-col items-center space-y-4 px-8">
-              <div className="w-full">
-                <PasswordForm />
-              </div>
-            </div>
-          ) }
-        </AppShell>
+        <div className="min-h-screen flex flex-col relative">
+          <DevBanner />
+          <BackgroundLogo />
+          <div className='mx-auto max-w-[1200px] flex-grow w-full'>
+            <AppShell isAuthenticated={ isAuthenticated }>
+              { isAuthenticated ? children : (
+                <div className="relative w-full flex flex-col items-center space-y-4 px-8 py-16">
+                  <div className="w-full">
+                    <PasswordForm />
+                  </div>
+                </div>
+              ) }
+            </AppShell>
+          </div>
+          <BackgroundCorner />
+        </div>
       </body>
     </html>
   );
